@@ -7,9 +7,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'category', 'name', 'created_at', 'updated_at')
+    list_display = ('id', 'category', 'name', 'short_description', 'image', 'created_at', 'updated_at')
 
-
+@admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'category','author','blog_image','status', 'is_featured','created_at','updated_at')
     prepopulated_fields = {'slug': ('title',)}
@@ -19,4 +19,3 @@ class BlogAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
-admin.site.register(Blog, BlogAdmin)

@@ -16,6 +16,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blogs',
+    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +133,43 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cấu hình đường dẫn cho các tệp phương tiện (media files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CKEDITOR_5_FILE_BROWSER = 'filebrowser'  # nếu bạn muốn hỗ trợ quản lý file
+CKEDITOR_5_UPLOAD_PATH = 'uploads/'  # thư mục lưu file upload
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "language": "vi",
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "underline", "link", "|",
+            "bulletedList", "numberedList", "|",
+            "blockQuote", "insertTable", "imageUpload", "|",
+            "undo", "redo", "removeFormat", "|",
+            "fontSize", "fontColor", "fontBackgroundColor"
+        ],
+        "image": {
+            "toolbar": [
+                "imageTextAlternative", "toggleImageCaption",
+                "imageStyle:inline", "imageStyle:side"
+            ]
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn", "tableRow", "mergeTableCells"
+            ]
+        },
+        "heading": {
+            "options": [
+                {"model": "paragraph", "title": "Đoạn văn", "class": "ck-heading_paragraph"},
+                {"model": "heading1", "view": "h1", "title": "Tiêu đề 1", "class": "ck-heading_heading1"},
+                {"model": "heading2", "view": "h2", "title": "Tiêu đề 2", "class": "ck-heading_heading2"},
+                {"model": "heading3", "view": "h3", "title": "Tiêu đề 3", "class": "ck-heading_heading3"},
+            ]
+        },
+        "removePlugins": [],
+        "extraPlugins": [],
+    }
+}
+
+
+

@@ -1,0 +1,499 @@
+/* HOME */
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* Navbar home */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Responsive logo */
+.logo-img {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    width: 140px;
+  }
+}
+
+/* Optional: Giới hạn chiều rộng của search form cho đẹp */
+.search-form {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Responsive logo */
+.logo-img {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    width: 140px;
+  }
+}
+
+/* Optional: Tối ưu form mobile */
+.search-form-mobile {
+  width: 100%;
+}
+
+
+/* Hover effect for navbar links */
+.navbar-nav .nav-link:hover {
+  color: #f7c59f !important;  /* Màu vàng tươi */
+  background-color: rgba(255, 255, 255, 0.05); /* Nhẹ nhàng */
+  transition: all 0.3s ease-in-out;
+}
+ 
+/* Chỉ áp dụng font lớn khi màn hình >= 992px (desktop) */
+@media (min-width: 992px) {
+  .navbar-nav .nav-item {
+    font-size: 1rem;
+  }
+}
+
+/* Bỏ border ở chế độ mobile (màn hình nhỏ hơn 992px) */
+@media (max-width: 991.98px) {
+  .nav-bordered {
+    border: none !important;
+    margin-left: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+.custom-login {
+  color: #555;
+  border-color: #FFC400;
+  background-color: transparent;
+}
+
+.custom-login:hover {
+  background-color: #eee;
+  color: #333;
+}
+
+.custom-signup {
+  background-color: #FFC400;  /* màu be nhạt */
+  color: #333;
+  border: none;
+}
+
+.custom-signup:hover {
+  background-color: #f2b27c;
+  color: #111;
+}
+
+/* Hiệu ứng mượt */
+.btn {
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-bordered {
+  border: 1px solid #FFC400; 
+  margin-left: 10px;
+  border-radius: 5px;
+}
+/*end Navbar home */
+
+.card-yellow-border {
+  border: 1px solid #FFC400;
+}
+
+
+/* Super Card  */
+
+.supercard{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.card-wrapper {
+    max-width: 1200px;
+    margin: 0 60px 35px;
+    padding: 20px 10px;
+    overflow: hidden;
+}
+
+.card-list .card-item{
+    list-style: none;
+}
+
+.card-list .card-item .card-link{
+    user-select: none;
+    display: block;
+    background: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    border: 2px solid transparent;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.05);
+    transition: 0.2s ease;
+}
+
+.card-list .card-item .card-link:active{
+    cursor: grabbing;
+}
+
+.card-list .card-item .card-link:hover{
+    border-color: #FFC400
+}
+
+.card-list .card-link .card-image{
+    width: 100%;
+    max-height: 200px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.card-list .card-link .badge{
+    color: #5372F0;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 16px 0 18px;
+    background: #DDE4FF;
+    width: fit-content;
+    border-radius: 50px;
+}
+
+.card-list .card-link .card-title{
+    font-size: 1.19rem;
+    color: #000;
+    font-weight: 600;
+}
+
+.card-list .card-link .card-button{
+    height: 35px;
+    width: 35px;
+    color: #5372F0;
+    border-radius: 50%;
+    margin: 30px 0 5px;
+    background: none;
+    cursor: pointer;
+    border: 2px solid #FFC400;
+    transform: rotate(-45deg);
+    transition: 0.4s ease;
+}
+
+.card-list .card-link:hover .card-button {
+    color: #fff;
+    background: #FFC400;
+
+}
+
+.card-wrapper .swiper-pagination-bullet {
+    height: 13px;
+    width: 13px;
+    opacity: 0.5;
+    background: #FFC400;
+}
+
+.card-wrapper .swiper-pagination-bullet-active {
+    opacity: 1;
+}
+
+.card-wrapper .swiper-slide-button{
+    color: #FFC400;
+    margin-top: -35px;
+}
+
+@media screen and (max-width: 768px) {
+    .card-wrapper {
+        margin: 0 10px 25px;
+    }
+
+    .card-wrapper .swiper-slide-button {
+        display: none;
+    }
+}
+
+
+/* Super Card  */
+/* search form */
+.search-form {
+  max-width: 500px;
+  width: 100%;
+}
+
+.search-input {
+  border-radius: 50px;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #FFC400;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+.search-btn {
+  border-radius: 50%;
+  padding: 0.5rem 0.75rem;
+  margin-left: 0.5rem;
+}
+/* end search form */
+/* category col */
+.custom-list-item {
+    background-color: #FFC400;
+    color: black;
+}
+
+.custom-list-item a {
+    color: #6C757D;
+    text-decoration: none; /* tuỳ chọn, để bỏ gạch chân */
+}
+
+.custom-list-item a:hover {
+    color: #5a6268; /* tuỳ chọn, đổi màu khi hover nếu muốn */
+}
+/* end category col */
+/* -----------------------------------END home------------------------------------- */
+/* Category1 */
+.breadcrumb a {
+  text-decoration: none;
+  color: #007bff; /* hoặc màu bạn muốn */
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline; /* hoặc none nếu muốn không có gạch dưới khi hover */
+  color: #0056b3;
+}
+/* Category1 */
+
+/* Log in */
+/* COLOR VARIABLES */
+:root {
+    --primary-color: #0D1936;
+    --secondary-color: #535354;
+    --background-color: #EFEFEF;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --white-color: #FFF;
+    --black-color: #000;
+    --input-border-color: #E3E4E6;
+    --transition-3s: 0.3s;
+}
+
+/* GLOBAL STYLES */
+
+
+/* REUSABLE ELEMENTS */
+a{
+    text-decoration: none;
+    color: var(--black-color);
+    transition: var(--transition-3s);
+}
+a:hover{
+    text-decoration: underline;
+}
+
+
+/* WRAPPER */
+.wrapper{
+    position: relative;
+    width: 430px;
+    height: 430px;
+    background-color: var(--white-color);
+    border-radius: 15px;
+    padding: 120px 32px 64px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 8px 15px var(--shadow-color);
+    transition: var(--transition-3s);
+    overflow: hidden;
+}
+/* FORM HEADER */
+.form-header{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 70px;
+    background-color: #FFC400;
+    border-radius: 0 0 20px 20px;
+}
+.form-header::before, .form-header::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: 30px;
+}
+.form-header::before{
+    left: -30px;
+    border-top-right-radius: 50%;
+    box-shadow: 15px 0 0 #FFC400;
+}
+.form-header::after{
+    right: -30px;
+    border-top-left-radius: 50%;
+    box-shadow: -15px 0 0 #FFC400;
+}
+/* TITLES */
+.titles{
+    position: relative;
+}
+.title-login, .title-register {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--white-color);
+    font-size: 24px;
+    transition: var(--transition-3s);
+
+    white-space: nowrap;        /* Không cho xuống dòng */
+    text-align: center;         /* Căn giữa nội dung nếu cần */
+    width: max-content;         /* Kích thước theo nội dung */
+}
+
+.title-register{
+    top: 50px;
+}
+
+/* FORMS */
+.login-form, .register-form{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    transition: var(--transition-3s);
+}
+.register-form{
+    left: 150%;
+}
+
+/* INPUT FIELDS */
+.input-box{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+}
+.input-field{
+    width: 100%;
+    height: 55px;
+    font-size: 16px;
+    background: transparent;
+    color: var(--black-color);
+    padding: 0 20px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 30px;
+    outline: none;
+    transition: var(--transition-3s);
+}
+.input-field:focus{
+    border: 1px solid var(--primary-color);
+}
+.label{
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+    transition: 0.2s;
+    cursor: text;
+}
+.input-field:focus ~ .label,
+.input-field:valid ~ .label{
+    top: 0;
+    font-size: 14px;
+    background-color: var(--white-color);
+    color: var(--primary-color);
+    padding: 0 10px;
+}
+.input-field:valid ~ .label{
+    color: var(--secondary-color);
+}
+.icon{
+    position: absolute;
+    top: 50%;
+    right: 25px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--secondary-color);
+}
+
+/* SUBMIT BUTTON */
+.btn-submit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 50px;
+    background-color: #FFC400;
+    color: var(--white-color);
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition-3s);
+}
+.btn-submit:hover{
+    gap: 15px;
+}
+.btn-submit i{
+    font-size: 20px;
+}
+/* SWITCH FORM */
+.switch-form{
+    text-align: center;
+}
+.switch-form a{
+    font-weight: 500;
+}
+
+.modal-content {
+  background-color: transparent;
+  border: none; /* nếu muốn bỏ luôn viền */
+  box-shadow: none; /* nếu muốn bỏ bóng */
+}
+
+.modal-body {
+  background-color: transparent !important;
+}
+
+
+/* RESPONSIVE STYLES */
+@media only screen and (max-width: 564px){
+    .wrapper{
+        margin: 20px;
+    }
+}
+
+@media only screen and (max-width: 564px) {
+  .wrapper {
+    max-width: 320px; /* hoặc kích thước bạn muốn */
+    margin: 20px auto; /* căn giữa */
+  }
+
+  .login-form, .register-form {
+    width: 90%;  /* nhỏ hơn desktop */
+  }
+}
+
+/* end log in */
