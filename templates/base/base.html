@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Công Nghệ X</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/blog.css'%}">
+  <!-- link swiperJS CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+</head>
+<body>
+
+{% include './header.html' %}
+
+
+<!-- nav col -->
+<div class="container">
+  <div class="row">
+    {% include './navcol.html' %}
+
+        {% block subcategory %}
+
+        {% endblock %}
+    
+        {% block midhome %}
+
+        {% endblock %}
+
+        {% block scientist %}
+
+        {% endblock %}
+ 
+  </div>
+</div>
+<!-- end nav col  -->
+
+<!-- Super card 1 -->
+{% block scratch %}
+
+{% endblock %}
+
+<!-- end super card 1 -->
+
+{% include './footer.html' %}
+
+
+
+  <!-- link swiperJS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- Bootstrap JS + Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+<!-- link swiperJS JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{% static 'js/blog.js'%}"></script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+
+<div class="col-12 col-md-9">
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="#">{{ category.category_name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ subcategory.name }}</li>
+      </ol>
+  </nav>
+
+  <h4 class=" border-bottom pb-2 d-flex align-items-center">{{ category.category_name }}</h4>
+
+  {% for sub in subcategories %}
+  <div class="card mb-3 mt-3 pb-1 card-yellow-border border-start border-warning">
+    <div class="row g-0">
+      <div class="col-md-2">
+        {% if sub.image %}
+          <img src="{{ sub.image.url }}" style="width: 200px;" class="img-fluid rounded-start pt-3 ps-2" alt="{{ sub.name }}">
+        {% else %}
+          <img src="{% static 'images/default.png' %}" style="width: 200px;" class="img-fluid rounded-start pt-3 ps-2" alt="No image">
+        {% endif %}
+      </div>
+      <div class="col-md-10">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="" class="text-decoration-none text-dark">
+              {{ sub.name }}
+            </a>
+          </h5>
+          <p  style="text-align: justify;" class="card-text">{{ sub.short_description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <p class="text-muted">Không có subcategory nào trong mục này.</p>
+  {% endfor %}
+</div>

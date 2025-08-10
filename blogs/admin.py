@@ -11,10 +11,10 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('id','title', 'category','author','blog_image','status', 'is_featured','created_at','updated_at')
+    list_display = ('title', 'author', 'subcategory', 'status', 'is_featured', 'created_at')
+    list_filter = ('status', 'is_featured', 'subcategory', 'author')
+    search_fields = ('title', 'short_description', 'blog_body')
     prepopulated_fields = {'slug': ('title',)}
-    search_fields = ('id', 'title', 'category__name', 'status')
-    list_editable = ( 'is_featured',)
 
 
 admin.site.register(Category, CategoryAdmin)

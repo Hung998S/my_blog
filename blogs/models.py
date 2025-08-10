@@ -37,7 +37,7 @@ STATUS_CHOICE = (
 class Blog(models.Model):
     title = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
-    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)  # Đổi tên field
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     blog_image = models.ImageField(upload_to='uploads/%y/%m/%d')
     short_description = models.TextField(max_length=1000)
@@ -52,3 +52,4 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+
