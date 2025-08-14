@@ -6,5 +6,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
-    path('', include('blogs.urls')),  # include toàn bộ URLs của app "blogs"
+    path('', include('blogs.urls')),  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

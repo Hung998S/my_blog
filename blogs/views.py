@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, SubCategory, Blog
+from django.core.paginator import Paginator
 
 
 def home(request):
@@ -35,12 +36,20 @@ def category_detail(request, category_id):
 def subcategory_detail(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     subcategories = category.subcategories.all()
-    blogs = Blog.objects.filter( subcategory__in=subcategories,status='published')  # Lấy tất cả blog thuộc các subcategory này
+    blogs = Blog.objects.filter( subcategory__in=subcategories,status='published') 
+    
+    # Pagination cho subcategories
+    paginator = Paginator(subcategories, 5)  # 5 sub mỗi trang
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    
     # Bài nổi bật
     featured_post = Blog.objects.filter(is_featured=True, status='published')
     return render(request, 'subcategory_detail.html', {
         'category': category,
         'subcategories': subcategories,
+        'page_obj': page_obj, 
         'blogs': blogs,
         'featured_post': featured_post,
     })
@@ -61,4 +70,6 @@ def category_blog(request, subcategory_id):
         'blogs': blogs,
         'featured_post': featured_post,
     })
+
+
 
