@@ -1,6 +1,9 @@
+import requests
 from django.shortcuts import render, get_object_or_404
 from .models import Category, SubCategory, Blog
 from django.core.paginator import Paginator
+from django.conf import settings
+from django.shortcuts import render
 
 
 def home(request):
@@ -9,16 +12,50 @@ def home(request):
     featured_post = Blog.objects.filter(is_featured = True ,status = 'published' ) # Lấy các bài viết nổi bật (is_featured=True) và đã được xuất bản (status='published')
     posts = Blog.objects.filter(is_featured = False, status='published')  # Lấy các bài viết bình thường (không nổi bật) và đã xuất bản
     latest_posts = Blog.objects.order_by('-created_at')[:6]  # Lấy 5 bài mới nhất
+    
+        # --- Lấy dữ liệu YouTube channel ---
+    api_url = "https://www.googleapis.com/youtube/v3/channels"
+    params = {
+        "part": "snippet,brandingSettings,statistics",
+        "id": "UC-jtWxHaKQX7UnG_fjoSZ-Q",  # ID kênh của bạn
+        "key": "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"  # API key
+    }
+    channel = None
+    try:
+        res = requests.get(api_url, params=params)
+        data = res.json()
+        if "items" in data and data["items"]:
+            channel = data["items"][0]
+    except Exception as e:
+        print("Lỗi lấy dữ liệu YouTube:", e)
 
     context = {
         'categories': categories,
         'subcategories': subcategories,      
         'featured_post': featured_post,
         'latest_posts': latest_posts,
-        'posts': posts 
+        'posts': posts ,
+        'channel': channel  # youtube
     }
 
     return render(request, 'home.html', context)
+
+
+def get_youtube_channel():
+    API_KEY = settings.YOUTUBE_API_KEY
+    CHANNEL_ID = "UC-jtWxHaKQX7UnG_fjoSZ-Q"  # ID kênh YouTube
+
+    base_url = "https://www.googleapis.com/youtube/v3/channels"
+    params = {
+        "part": "snippet,statistics,brandingSettings",
+        "id": CHANNEL_ID,
+        "key": API_KEY
+    }
+    res = requests.get(base_url, params=params)
+    data = res.json()
+    if "items" in data and len(data["items"]) > 0:
+        return data["items"][0]
+    return None
 
 def category_detail(request, category_id):
     category = get_object_or_404(Category, id=category_id) # Lấy đối tượng Category từ database dựa trên category_id.
@@ -70,6 +107,26 @@ def category_blog(request, subcategory_id):
         'blogs': blogs,
         'featured_post': featured_post,
     })
+
+
+def youtube_info(request):
+    api_url = "https://www.googleapis.com/youtube/v3/channels"
+    params = {
+        "part": "snippet,brandingSettings,statistics",
+        "id": "UC-jtWxHaKQX7UnG_fjoSZ-Q",
+        "key": "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"
+    }
+    res = requests.get(api_url, params=params)
+    data = res.json()
+
+    channel = None
+    if "items" in data and len(data["items"]) > 0:
+        channel = data["items"][0]
+
+    return render(request, "base/youtube_info.html", {
+        "channel": channel
+    })
+
 
 
 

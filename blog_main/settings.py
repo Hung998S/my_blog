@@ -67,6 +67,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'blogs.context_processors.categories_processor',
+                'blogs.context_processors.youtube_channel_context',
+
             ],
         },
     },
@@ -130,6 +132,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+YOUTUBE_API_KEY = "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"
 
 # Cấu hình đường dẫn cho các tệp phương tiện (media files)
 MEDIA_URL = '/media/'

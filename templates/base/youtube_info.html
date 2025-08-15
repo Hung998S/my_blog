@@ -1,0 +1,47 @@
+{% if channel %}
+<div style="max-width: 500px; margin-bottom: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-family: Arial, sans-serif; overflow: hidden;">
+
+    <!-- Ảnh bìa -->
+    {% if channel.brandingSettings.image.bannerExternalUrl %}
+        <div style="width: 100%; height: 140px; overflow: hidden;">
+            <img src="{{ channel.brandingSettings.image.bannerExternalUrl }}" 
+                 alt="Ảnh bìa" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    {% endif %}
+
+    <div style="padding: 15px 15px 10px 15px;">
+
+        <!-- Avatar + Tên -->
+        <div style="display: flex; align-items: center;">
+            <img src="{{ channel.snippet.thumbnails.high.url }}" 
+                 alt="Ảnh kênh" 
+                 style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid white; margin-right: 15px;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: #1d2129;">{{ channel.snippet.title }}</h3>
+        </div>
+
+        <!-- Stats -->
+        <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem; color: #606770;">
+            <span><strong>{{ channel.statistics.subscriberCount }}</strong> Subscribers</span>
+            <span><strong>{{ channel.statistics.videoCount }}</strong> Videos</span>
+            <span><strong>{{ channel.statistics.viewCount }}</strong> Views</span>
+        </div>
+
+        <!-- Logo trái + Nút phải -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <!-- Logo YouTube -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" 
+                 alt="YouTube" 
+                 style="height: 22px;">
+
+            <!-- Nút Xem kênh -->
+            <a href="https://www.youtube.com/channel/{{ channel.id }}" target="_blank" 
+               style="background-color: #ff0000; color: white; padding: 8px 14px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                ▶ Xem kênh
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+    <p style="text-align: center; color: #888;">Không có dữ liệu kênh.</p>
+{% endif %}
