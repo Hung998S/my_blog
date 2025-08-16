@@ -78,3 +78,5 @@ function registerFunction(){
     registerTitle.style.top = "50%";
     registerTitle.style.opacity = 1;
 }
+
+

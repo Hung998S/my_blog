@@ -8,64 +8,52 @@
 
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons-->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'css/blog.css'%}">
-  <!-- link swiperJS CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <!-- Preload + apply custom CSS -->
+  <link rel="preload" href="{% static 'css/blog.css' %}" as="style" onload="this.rel='stylesheet'">
+  <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+
+  <style>
+    .carousel-container { overflow: hidden; }
+    .card-slider { display: flex; gap: 1rem; transition: transform 0.5s ease-in-out; }
+    .custom-card {
+      flex: 0 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .bg-custom { background-color: #f6f6f6; }
+    @media (max-width: 575px) { .custom-card { flex-basis: 100%; } }
+    @media (min-width: 576px) and (max-width: 767px) { .custom-card { flex-basis: calc((100% / 3) - 0.7rem); } }
+    @media (min-width: 768px) { .custom-card { flex-basis: calc((100% / 5) - 0.8rem); } }
+  </style>
 </head>
 <body>
 
-{% include './header.html' %}
+  {% include './header.html' %}
 
+  <div class="container">
+    <div class="row">
+      {% include './navcol.html' %}
 
-<!-- nav col -->
-<div class="container">
-  <div class="row">
-    {% include './navcol.html' %}
-
-        {% block blogcategory %}
-
-        {% endblock %}
-
-        {% block subcategory %}
-
-        {% endblock %}
-    
-        {% block midhome %}
-
-        {% endblock %}
-
-        {% block scientist %}
-
-        {% endblock %}
- 
+      {% block blogcategory %}{% endblock %}
+      {% block subcategory %}{% endblock %}
+      {% block midhome %}{% endblock %}
+      {% block scientist %}{% endblock %}
+    </div>
   </div>
-</div>
-<!-- end nav col  -->
 
-<!-- Super card 1 -->
-{% block computerStructure %}
+  {% block computerStructure %}{% endblock %}
 
-{% endblock %}
+  {% include './footer.html' %}
 
-<!-- end super card 1 -->
-
-{% include './footer.html' %}
-
-
-
-  <!-- link swiperJS JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <!-- Bootstrap JS + Popper -->
+  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-<!-- link swiperJS JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <!-- Custom JS -->
-  <script src="{% static 'js/blog.js'%}"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="{% static 'js/blog.js' %}"></script>
 </body>
 </html>

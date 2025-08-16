@@ -97,7 +97,7 @@ def category_blog(request, subcategory_id):
     # Lấy category cha của subcategory này
     category = subcategory.category  
     # Lấy blog thuộc subcategory này
-    blogs = Blog.objects.filter(subcategory=subcategory,status='published')
+    blogs = Blog.objects.filter(subcategory=subcategory,status='published').order_by('-created_at')
     # Bài viết nổi bật (toàn bộ site hoặc chỉ subcategory này tùy ý)
     featured_post = Blog.objects.filter(is_featured=True, status='published')
 
