@@ -11,7 +11,7 @@ def home(request):
     subcategories = SubCategory.objects.all()  # Lấy toàn bộ danh mục con   
     featured_post = Blog.objects.filter(is_featured = True ,status = 'published' ) # Lấy các bài viết nổi bật (is_featured=True) và đã được xuất bản (status='published')
     posts = Blog.objects.filter(is_featured = False, status='published')  # Lấy các bài viết bình thường (không nổi bật) và đã xuất bản
-    latest_posts = Blog.objects.order_by('-created_at')[:6]  # Lấy 5 bài mới nhất
+    latest_posts = Blog.objects.order_by('-created_at')[:4]  # Lấy 5 bài mới nhất
     
         # --- Lấy dữ liệu YouTube channel ---
     api_url = "https://www.googleapis.com/youtube/v3/channels"
@@ -128,5 +128,18 @@ def youtube_info(request):
     })
 
 
-
-
+def blog_detail(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+    subcategory = blog.subcategory           # đây là SubCategory của blog
+    category = subcategory.category          # đây là Category cha
+    
+    related_blogs = Blog.objects.filter(subcategory=blog.subcategory).exclude(id=blog.id).order_by('-created_at')[:4]
+    if not related_blogs.exists():
+        related_blogs = Blog.objects.exclude(id=blog.id).order_by('-created_at')[:4]
+        
+    return render(request, 'blog_detail.html', {
+        'blog': blog,
+        'subcategory': subcategory,
+        'category': category,
+        'related_blogs': related_blogs,
+    })

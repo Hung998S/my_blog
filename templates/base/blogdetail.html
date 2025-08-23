@@ -1,0 +1,72 @@
+ {% load static %}
+
+   
+   <div class="col-12 col-md-9 ">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'subcategory_detail' category.id %}">{{ category.category_name }}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'category_blog' subcategory.id %}">{{ subcategory.name }}</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ blog.title }}
+                </li>
+            </ol>
+        </nav>
+
+        <div>
+            <h2 class="fw-bold">{{ blog.title }}</h2>
+            <p > Ngày đăng: {{ blog.created_at|date:"d/m/Y" }}</p>
+            <div class="blog-content">
+                {{ blog.blog_body|safe }}
+            </div>
+        </div>
+
+        {% comment %} --------------- comment -------------------- {% endcomment %}
+        <div class="comment-form">
+            <h3>Để lại bình luận</h3>
+            <form action="#" method="POST">
+
+                <div class="form-group">
+                    <label for="comment">Bình luận</label>
+                    <textarea id="comment" name="comment" rows="5" placeholder="Viết bình luận..." required></textarea>
+                </div>
+
+                <button type="submit">Gửi bình luận</button>
+            </form>
+        </div>
+    </div>
+
+<a class="textAi">Bài viết Liên quan</a>
+
+<div class="supercard">
+    <div class="swiper">
+        <div class="card-wrapper">
+            <ul class="card-list swiper-wrapper">
+                {% for related in related_blogs %}
+                    <li class="card-item swiper-slide">
+                        <a href="{% url 'blog_detail' related.id %}" class="card-link">
+                            {% if related.blog_image %}
+                                <img src="{{ related.blog_image.url }}" alt="{{ related.title }}" class="card-image">
+                            {% else %}
+                                <img src="{% static 'default-blog.png' %}" alt="No image" class="card-image">
+                            {% endif %}
+                            <h5 class="card-title pt-3">{{ related.title }}</h5>
+                            <p class="pt-3 text-dark">{{ related.short_description|truncatewords:25 }}</p>
+                        </a>
+                    </li>
+                {% empty %}
+                    <p>Không có bài viết liên quan.</p>
+                {% endfor %}
+            </ul>
+
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+</div>
+

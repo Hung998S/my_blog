@@ -9,23 +9,30 @@
             </ol>
         </nav>
 
-         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-            {% for blog in blogs %}
-                <div class="col">
-                    <div class="card " style="height: 400px; overflow: hidden;">
-                        <img src="{{ blog.blog_image.url }}" 
-                            style="height: 180px; object-fit: cover;" 
-                            alt="{{ blog.title }}">
-                        <div class="card-body" style="height: 170px; overflow: hidden;">
-                            <h5 class="card-title">{{ blog.title }}</h5>
-                            <p class="card-text">{{ blog.short_description|truncatewords:18 }}</p>
-                        </div>
-                    </div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-3">
+    {% for blog in blogs %}
+    <div class="col">
+        <div class="mycard">
+            <div class="mycard-img">
+                <a href="{% url 'blog_detail' blog.id %}">
+                    <img src="{{ blog.blog_image.url }}" 
+                         alt="{{ blog.title }}"
+                         class="mycard-imgbox">
+                </a>
+            </div>
+            <hr class="mycard-divider">
+            <div class="mycard-footer">
+                <div class="mycard-title">
+                    <a href="{% url 'blog_detail' blog.id %}">{{ blog.title }}</a>
                 </div>
-            {% empty %}
-                <p>Không có bài viết nào.</p>
-            {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Không có bài viết nào.</p>
+    {% endfor %}
+</div>
 
-                </div>
+
 
             </div>

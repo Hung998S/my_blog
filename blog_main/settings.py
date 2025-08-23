@@ -124,7 +124,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    STATIC_DIR
+    STATIC_DIR 
 ]
 
 # Default primary key field type
@@ -147,7 +147,7 @@ CKEDITOR_5_CONFIGS = {
             "heading", "|",
             "bold", "italic", "underline", "link", "|",
             "bulletedList", "numberedList", "|",
-            "blockQuote", "insertTable", "imageUpload", "|",
+            "blockQuote", "insertTable", "imageUpload","htmlEmbed" , "|",
             "undo", "redo", "removeFormat", "|",
             "fontSize", "fontColor", "fontBackgroundColor"
         ],

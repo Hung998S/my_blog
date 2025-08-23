@@ -1,0 +1,21 @@
+<div class="col-12 col-md-6 mb-2" >
+<a class="nav-link textAi" href="{% url 'category_blog' categories.0.subcategories.all.1.id %}">
+    {{ categories.0.subcategories.all.1.name }}
+</a>
+
+
+<div class="row mt-3">
+    {% for blog in categories.0.subcategories.all.1.blog_set.all|dictsortreversed:"created_at"|slice:":4" %}
+        <div class="col-12 col-md-6 mb-4">
+            <div class="cardAI">
+                <a href="{% url 'blog_detail' blog.id %}">
+                    <img src="{{ blog.blog_image.url }}" class="card-img-top pb-2" alt="{{ blog.title }}">
+                    <span class="card__title">{{ blog.title }}</span>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+
+</div>

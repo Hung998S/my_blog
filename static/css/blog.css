@@ -1,5 +1,5 @@
 /* ------------------ GLOBAL ------------------ */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100..900&display=swap');
+
 
 :root {
   --primary-color: #0D1936;
@@ -26,6 +26,66 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* ------------------ ButtonSignUp ------------------ */
+.buttonSI {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px;
+  color: black;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: solid 2px black;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-size: 17px;
+  background-color: hsl(49deg 98% 60%);
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.buttonSI:active {
+  transform: scale(0.9);
+  transition: all 100ms ease;
+}
+
+.buttonSI svg {
+  transition: all 0.5s ease;
+  z-index: 2;
+}
+
+.play {
+  transition: all 0.5s ease;
+  transition-delay: 300ms;
+}
+
+.buttonSI:hover svg {
+  transform: scale(3) translate(50%);
+}
+
+.now {
+  position: absolute;
+  left: 0;
+  transform: translateX(-100%);
+  transition: all 0.5s ease;
+  z-index: 2;
+}
+
+.buttonSI:hover .now {
+  transform: translateX(10px);
+  transition-delay: 300ms;
+}
+
+.buttonSI:hover .play {
+  transform: translateX(200%);
+  transition-delay: 300ms;
+}
+
+
 
 /* ------------------ NAVBAR ------------------ */
 .logo-img {
@@ -83,7 +143,7 @@ a:hover {
 }
 
 .nav-bordered {
-  border: 1px solid var(--highlight-color);
+  border: 1px solid black;
   margin-left: 10px;
   border-radius: 5px;
 }
@@ -163,23 +223,101 @@ a:hover {
   color: var(--highlight-color);
   margin-top: -35px;
 }
+/* ------------------ Font ------------------ */
+.mono {
+  font-family: monospace;
+  font-size: 16px;
+}
 
-/* ------------------ SEARCH ------------------ */
-.search-input {
-  border-radius: 50px;
-  padding: 0.6rem 1.2rem;
-  border: 1px solid var(--highlight-color);
-  transition: all 0.3s ease;
-  flex: 1;
+.mono_b {
+  font-family: monospace;
+  font-size: 20px;
 }
-.search-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-  border-color: #86b7fe;
+
+.mono_c {
+  font-family: monospace;
+  font-size: 25px;
 }
-.search-btn {
-  border-radius: 50%;
-  padding: 0.5rem 0.75rem;
-  margin-left: 0.5rem;
+/* ------------------ BRUTALIST SEARCH ------------------ */
+.brutalist-container {
+  position: relative;
+  width: 500px;
+  font-family: monospace;
+}
+
+.brutalist-input {
+  width: 100%;
+  height: 10px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+  background-color: #fff;
+  border: 3px solid #000;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 4px 4px 0 #000, 8px 8px 0 #4a90e2;
+}
+
+.brutalist-input::placeholder {
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.brutalist-input:focus::placeholder {
+  color: transparent;
+}
+
+.brutalist-input:focus + .brutalist-label {
+  transform: rotate(0deg) scale(1.05);
+  background-color: #4a90e2;
+}
+
+/* Animation */
+.brutalist-input:focus {
+  animation: focus-pulse 4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite,
+             glitch 0.7s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+@keyframes focus-pulse {
+  0%, 100% { border-color: #000; }
+  50% { border-color: #4a90e2; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.smooth-type {
+  position: relative;
+  overflow: hidden;
+}
+
+.smooth-type::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.smooth-type:focus::before {
+  opacity: 1;
+  animation: type-gradient 2s linear infinite;
+}
+
+@keyframes type-gradient {
+  0% { background-position: 300px 0; }
+  100% { background-position: 0 0; }
 }
 
 /* ------------------ CATEGORY ------------------ */
@@ -202,98 +340,263 @@ a:hover {
 }
 
 /* ------------------ LOGIN FORM ------------------ */
-.wrapper {
+
+/* From Uiverse.io by andrew-demchenk0 - renamed to avoid conflicts */
+.auth-wrapper {
+  --input-focus: #2d8cf0;
+  --font-color: #323232;
+  --font-color-sub: #666;
+  --bg-color: #fff;
+  --bg-color-alt: #666;
+  --main-color: #323232;
+}
+
+
+/* switch card */
+.auth-switch {
+  transform: translateY(-200px);
   position: relative;
-  width: 430px; height: 430px;
-  background: var(--white-color);
-  border-radius: 15px;
-  padding: 120px 32px 64px;
-  border: 1px solid var(--primary-color);
-  box-shadow: 0 8px 15px var(--shadow-color);
-  overflow: hidden;
-  transition: var(--transition-3s);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  width: 50px;
+  height: 20px;
 }
-@media (max-width: 564px) {
-  .wrapper { max-width: 320px; margin: 20px auto; }
-  .login-form, .register-form { width: 90%; }
+
+.auth-card-side {
+  position: relative; /* để các icon absolute căn cứ vào span này */
+  display: inline-block;
+  width: 120px; /* tổng chiều rộng chứa 2 icon */
+  height: 50px;
 }
-.form-header {
-  position: absolute; top: 0; left: 50%;
-  transform: translateX(-50%);
-  display: flex; align-items: center; justify-content: center;
-  width: 200px; height: 70px;
-  background-color: var(--highlight-color);
-  border-radius: 0 0 20px 20px;
+
+.auth-icon {
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 40px;
 }
-.form-header::before, .form-header::after {
-  content: ""; position: absolute; top: 0; width: 30px; height: 30px;
+
+.login-icon {
+  left: -30px; /* icon login nằm bên trái */
+  top: -15px;
 }
-.form-header::before {
-  left: -30px; border-top-right-radius: 50%;
-  box-shadow: 15px 0 0 var(--highlight-color);
+
+.signup-icon {
+  left: 110px; /* icon signup nằm bên phải, cách icon login 10px */
+  top: -18px;
+
 }
-.form-header::after {
-  right: -30px; border-top-left-radius: 50%;
-  box-shadow: -15px 0 0 var(--highlight-color);
+.auth-toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
-.titles { position: relative; }
-.title-login, .title-register {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--white-color); font-size: 24px;
-  transition: var(--transition-3s);
-  white-space: nowrap; text-align: center; width: max-content;
+
+.auth-slider {
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-colorcolor);
+  transition: 0.3s;
 }
-.title-register { top: 50px; }
-.login-form, .register-form {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  width: 85%; transition: var(--transition-3s);
+
+.auth-slider:before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  border: 2px solid var(--main-color);
+  border-radius: 5px;
+  left: -2px;
+  bottom: 2px;
+  background-color: var(--bg-color);
+  box-shadow: 0 3px 0 var(--main-color);
+  transition: 0.3s;
 }
-.register-form { left: 150%; }
-.input-box { margin: 20px 0; display: flex; flex-direction: column; position: relative; }
-.input-field {
-  width: 100%; height: 55px;
-  font-size: 16px; padding: 0 20px;
-  border: 1px solid var(--input-border-color);
-  border-radius: 30px; outline: none;
-  background: transparent; color: var(--black-color);
-  transition: var(--transition-3s);
+
+.auth-toggle:checked + .auth-slider {
+  background-color: var(--input-focus);
 }
-.input-field:focus { border-color: var(--primary-color); }
-.label {
-  position: absolute; top: 50%; left: 20px;
-  transform: translateY(-50%);
-  color: var(--secondary-color);
-  transition: 0.2s; cursor: text;
+
+.auth-toggle:checked + .auth-slider:before {
+  transform: translateX(30px);
 }
-.input-field:focus ~ .label,
-.input-field:valid ~ .label {
-  top: 0; font-size: 14px;
-  background: var(--white-color);
-  padding: 0 10px;
-  color: var(--primary-color);
+
+.auth-toggle:checked ~ .auth-card-side:before {
+  text-decoration: none;
 }
-.input-field:valid ~ .label { color: var(--secondary-color); }
-.icon {
-  position: absolute; top: 50%; right: 25px;
-  transform: translateY(-50%);
-  font-size: 20px; color: var(--secondary-color);
+
+.auth-toggle:checked ~ .auth-card-side:after {
+  text-decoration: underline;
 }
-.btn-submit {
-  display: flex; align-items: center; justify-content: center;
-  gap: 10px;
-  width: 100%; height: 50px;
-  background: var(--highlight-color);
-  color: var(--white-color);
-  font-size: 16px; font-weight: 500;
-  border: none; border-radius: 30px;
-  cursor: pointer; transition: var(--transition-3s);
+
+/* card */
+.auth-flip-card__inner {
+  width: 300px;
+  height: 350px;
+  position: relative;
+  background-color: transparent;
+  perspective: 1000px;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
 }
-.btn-submit:hover { gap: 15px; }
-.btn-submit i { font-size: 20px; }
-.switch-form { text-align: center; }
-.switch-form a { font-weight: 500; }
-.modal-content, .modal-body { background: transparent !important; border: none; box-shadow: none; }
+
+.auth-toggle:checked ~ .auth-flip-card__inner {
+  transform: rotateY(180deg);
+}
+
+.auth-toggle:checked ~ .auth-flip-card__front {
+  box-shadow: none;
+}
+
+.auth-flip-card__front, .auth-flip-card__back {
+  padding: 20px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: lightgrey;
+  gap: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+}
+
+.auth-flip-card__back {
+  width: 100%;
+  transform: rotateY(180deg);
+}
+
+.auth-flip-card__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.auth-title {
+  margin: 20px 0 20px 0;
+  font-size: 25px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--main-color);
+}
+
+.auth-flip-card__input {
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  padding: 5px 10px;
+  outline: none;
+}
+
+.auth-flip-card__input::placeholder {
+  color: var(--font-color-sub);
+  opacity: 0.8;
+}
+
+.auth-flip-card__input:focus {
+  border: 2px solid var(--input-focus);
+}
+
+.auth-flip-card__btn:active {
+  box-shadow: 0px 0px var(--main-color);
+  transform: translate(3px, 3px);
+}
+
+.auth-flip-card__btn {
+  margin: 20px 0 20px 0;
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--font-color);
+  cursor: pointer;
+}
+
+.modal-dialog {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* modal body căn giữa */
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px 15px;
+}
+
+/* switch container */
+.auth-card-switch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+/* chỉnh lại switch nhỏ gọn */
+.auth-switch {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  width: 60px;
+  margin-bottom: 20px;
+}
+
+.auth-card-side::before {
+  position: absolute;
+
+}
+
+.auth-card-side::after {
+  position: absolute;
+
+}
+
+/* Ẩn nền trắng + viền của modal */
+.modal-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* responsive cho mobile */
+@media (max-width: 576px) {
+  .auth-card-side::before { left: -80px; font-size: 14px; }
+  .auth-card-side::after { right: -65px; font-size: 14px; }
+}
+
 
 /* ------------------ SLIDER ------------------ */
     .carousel-container {
@@ -312,11 +615,15 @@ a:hover {
 
     .bg-custom {
     background-color: #f6f6f6 ;
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+
     }
 
     .card-img-top{
-        width: 244px;
-        height: 164px;
+        width: 100%;       
+        height: 164px;      
+        object-fit: cover; 
     }
 
     /* <576px: 1 card */
@@ -339,3 +646,424 @@ a:hover {
         flex-basis: calc((100% / 5) - 0.8rem);
       }
     }
+
+
+    /* card AI */
+    /* From Uiverse.io by 0xnihilism */ 
+    .cardAI {
+      height: 280px;
+      padding: 20px;
+      background: #fff;
+      border: 2px solid #000;
+      box-shadow: 4px 5px 0 #000;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-radius: 5px;
+    }
+
+    .cardAI:hover {
+      transform: translate(-5px, -5px);
+      box-shadow: 6px 6px 0 #000;
+    }
+
+    .card__title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #000;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card__title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 90%;
+      height: 3px;
+      background-color: #000;
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+
+    .cardAI:hover .card__title::after {
+      transform: translateX(0);
+    }
+
+    .card__content {
+      font-size: 16px;
+      line-height: 1.4;
+      color: #000;
+      margin-bottom: 20px;
+    }
+
+    .card__form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .card__form input {
+      padding: 10px;
+      border: 3px solid #000;
+      font-size: 16px;
+      font-family: inherit;
+      transition: transform 0.3s;
+      width: calc(100% - 26px); /* Adjust for padding and border */
+    }
+
+    .card__form input:focus {
+      outline: none;
+      transform: scale(1.05);
+      background-color: #000;
+      color: #ffffff;
+    }
+
+    @keyframes glitch {
+      0% {
+        transform: translate(2px, 2px);
+      }
+      25% {
+        transform: translate(-2px, -2px);
+      }
+      50% {
+        transform: translate(-2px, 2px);
+      }
+      75% {
+        transform: translate(2px, -2px);
+      }
+      100% {
+        transform: translate(2px, 2px);
+      }
+    }
+
+    .glitch {
+      animation: glitch 0.3s infinite;
+    }
+
+  /* end cardAI */
+
+  /* Card blog */
+  .mycard {
+  --font-color: #323232;
+  --font-color-sub: #666;
+  --bg-color: #fff;
+  --main-color: #323232;
+  --main-focus: #2d8cf0;
+
+  width: 100%;              /* ✅ full chiều ngang col */
+  height: 340px;          
+  background: var(--bg-color);
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 15px;
+  gap: 10px;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.mycard-img {
+  transition: all 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.mycard-imgbox {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  object-fit: cover;   /* ✅ ảnh auto co giãn */
+}
+
+.mycard-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--font-color);
+  height: 81px;              /* chiều cao vùng chứa */
+  display: flex;
+  align-items: center;       /* căn giữa theo chiều dọc */
+  justify-content: center;   /* căn giữa theo chiều ngang */
+  text-align: center;
+}
+
+
+.mycard-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--font-color-sub);
+  text-align: center;
+}
+
+.mycard-divider {
+  width: 100%;
+  border: 1px solid var(--main-color);
+  border-radius: 50px;
+  margin: 10px 0;
+}
+
+.mycard-footer {
+  margin-top: auto;  /* ✅ đẩy footer xuống đáy card */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mycard-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--font-color);
+}
+
+.mycard-price span {
+  color: var(--font-color-sub);
+}
+
+.mycard-btn {
+  height: 35px;
+  background: var(--bg-color);
+  border: 2px solid var(--main-color);
+  border-radius: 5px;
+  padding: 0 15px;
+  transition: all 0.3s;
+}
+
+.mycard-btn svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--main-color);
+  transition: all 0.3s;
+}
+
+.mycard-img:hover {
+  transform: translateY(-3px);
+}
+
+.mycard-btn:hover {
+  border: 2px solid var(--main-focus);
+}
+
+.mycard-btn:hover svg {
+  fill: var(--main-focus);
+}
+
+.mycard-btn:active {
+  transform: translateY(3px);
+}
+
+  /* card tech */
+.tech-page {
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    border: 2px solid #000;
+    box-shadow: 4px 5px 0 #000;
+    border-radius: 5px;    
+    margin-top: 15px;
+    height: 590px; /* full height container */
+    display: flex;
+    flex-direction: column;
+}
+
+.tech-card-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+}
+
+.tech-card {
+    display: flex;       /* dùng flex để chia trái/phải */
+    height: 200px;       /* giữ chiều cao */
+    background: linear-gradient(135deg, #1f1f1f, #2c2c2c);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;    /* tránh ảnh tràn */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,255,255,0.3);
+}
+
+.tech-card-left {
+    flex: 0 0 33%;      /* khoảng 1/3 cho ảnh */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.tech-card-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* ảnh không méo */
+}
+
+.tech-card-right {
+    flex: 1;             /* phần còn lại cho title + text */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* căn giữa theo chiều cao */
+}
+
+.tech-card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #00fff7;
+    margin: 0 0 10px 0;
+}
+
+.tech-card-text {
+    font-size: 0.9rem;
+    color: #c0c0c0;
+}
+
+  /* end card tech */
+
+.textAi {
+    font-family: 'Bungee', cursive !important;
+    font-size: 25px;
+    letter-spacing: 2px;
+    text-decoration: none !important;
+    margin-top: 10px;
+}
+
+.textInternet {
+    font-family: 'Bungee', cursive !important;
+    font-size: 25px;
+    letter-spacing: 2px;
+    text-decoration: none !important;
+    text-align: right;
+    margin-top: 10px;
+
+}
+
+/* blog detail */
+.blog-content {
+    text-align: justify;       /* Canh đều hai bên */
+    text-justify: inter-word;  
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ảnh mặc định (mobile / tablet) */
+.blog-content img {
+    display: block;
+    margin: 0.75em auto;
+    width: auto;          /* full chiều ngang container */
+    height: 300px;        /* set cứng chiều cao */
+    object-fit: cover;    /* cắt ảnh để không méo */
+}
+
+/* Trên desktop: cho phép ảnh rộng hơn một chút */
+@media (min-width: 992px) {
+    .blog-content img {
+        height: 400px;
+    }
+}
+
+.blog-content figure {
+    display: table;         /* figure sẽ giống 1 cái bảng */
+    margin: 1em auto;
+}
+
+
+.blog-content figcaption {
+    display: table-caption; /* caption bám width của table (ảnh) */
+    caption-side: bottom;   /* nằm dưới ảnh */
+    text-align: center;
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 0.3em;
+}
+
+/* comment */
+.comment-form {
+    max-width: 100%;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.comment-form h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.comment-form .form-group {
+    margin-bottom: 15px;
+}
+
+.comment-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+}
+
+.comment-form input,
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.comment-form textarea {
+    resize: vertical;
+}
+
+.comment-form button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.comment-form button:hover {
+    background-color: #2980b9;
+}
+
+/* iframe */
+.blog-content iframe {
+    width: 100%;          /* chiếm toàn bộ chiều rộng container */
+    height: 500px;        /* chiều cao chuẩn YouTube 16:9 */
+    max-width: 100%;
+    display: block;
+    margin: 1em auto;     /* căn giữa video */
+}
+
+@media (max-width: 768px) {
+    .blog-content iframe {
+        height: calc(100vw * 9 / 16); /* responsive theo tỉ lệ 16:9 */
+    }
+}
+
+.blog-content figure.media {
+    margin: 1em 0;
+}

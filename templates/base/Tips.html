@@ -1,0 +1,26 @@
+<div class="col-12 col-md-6 mb-2">
+<a class="nav-link textInternet" href="{% url 'category_blog' categories.2.subcategories.all.0.id %}">
+    {{ categories.2.subcategories.all.0.name }}
+</a>
+
+
+<div class="tech-page">
+    <div class="tech-card-container">
+        {% for blog in categories.2.subcategories.all.0.blog_set.all|dictsortreversed:"created_at"|slice:":10" %}
+        <a href="{% url 'blog_detail' blog.id %}">
+        <div class="tech-card">
+            <div class="tech-card-left">
+                <img src="{{ blog.blog_image.url }}" alt="{{ blog.title }}">
+            </div>
+            <div class="tech-card-right">
+                <h5 class="tech-card-title">{{ blog.title }}</h5>
+                <p class="tech-card-text">{{ blog.short_description|truncatewords:40 }}</p>
+            </div>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+
+</div>

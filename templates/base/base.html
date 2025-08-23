@@ -12,25 +12,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-  <!-- Preload + apply custom CSS -->
-  <link rel="preload" href="{% static 'css/blog.css' %}" as="style" onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
+
+
+  <!--  custom CSS -->
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
 
-  <style>
-    .carousel-container { overflow: hidden; }
-    .card-slider { display: flex; gap: 1rem; transition: transform 0.5s ease-in-out; }
-    .custom-card {
-      flex: 0 0 auto;
-      background: #fff;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .bg-custom { background-color: #f6f6f6; }
-    @media (max-width: 575px) { .custom-card { flex-basis: 100%; } }
-    @media (min-width: 576px) and (max-width: 767px) { .custom-card { flex-basis: calc((100% / 3) - 0.7rem); } }
-    @media (min-width: 768px) { .custom-card { flex-basis: calc((100% / 5) - 0.8rem); } }
-  </style>
 </head>
 <body>
 
@@ -39,7 +27,7 @@
   <div class="container">
     <div class="row">
       {% include './navcol.html' %}
-
+      {% block blogdetail %}{% endblock %}
       {% block blogcategory %}{% endblock %}
       {% block subcategory %}{% endblock %}
       {% block midhome %}{% endblock %}
@@ -47,7 +35,19 @@
     </div>
   </div>
 
-  {% block computerStructure %}{% endblock %}
+  {% block computerStructure %}
+  
+  {% endblock %}
+
+
+    <div class="container">
+    <div class="row">
+        {% block AI %}{% endblock %}
+        {% block Tips %}{% endblock %}
+    </div>
+  </div>
+
+
 
   {% include './footer.html' %}
 
