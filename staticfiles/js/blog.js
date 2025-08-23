@@ -78,3 +78,13 @@ function registerFunction(){
     registerTitle.style.top = "50%";
     registerTitle.style.opacity = 1;
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Hiển thị các toast Django
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.forEach(function(toastEl) {
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 }); // 3 giây tự ẩn
+        toast.show();
+    });
+});

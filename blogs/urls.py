@@ -9,5 +9,6 @@ urlpatterns = [
     path("youtube-info/", views.youtube_info, name="youtube_info"),
     path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),
     path('blog/search/', views.search, name='search'),
-
+    path("", views.home, name="home"),
+    path("auth/", views.auth_action, name="auth_action"),
     ]

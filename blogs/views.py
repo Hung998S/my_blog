@@ -1,27 +1,31 @@
 import requests
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, SubCategory, Blog
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render
 from django.db.models import Q,Case, When, Value, IntegerField
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
 
 def home(request):
-    categories = Category.objects.all()   # Lấy toàn bộ danh mục chính        
-    subcategories = SubCategory.objects.all()  # Lấy toàn bộ danh mục con   
-    featured_post = Blog.objects.filter(is_featured = True ,status = 'published' ) # Lấy các bài viết nổi bật (is_featured=True) và đã được xuất bản (status='published')
-    posts = Blog.objects.filter(is_featured = False, status='published')  # Lấy các bài viết bình thường (không nổi bật) và đã xuất bản
-    latest_posts = Blog.objects.order_by('-created_at')[:4]  # Lấy 5 bài mới nhất
-    
-        # --- Lấy dữ liệu YouTube channel ---
+    # --- Lấy dữ liệu cho trang ---
+    categories = Category.objects.all()
+    subcategories = SubCategory.objects.all()
+    featured_post = Blog.objects.filter(is_featured=True, status='published')
+    posts = Blog.objects.filter(is_featured=False, status='published')
+    latest_posts = Blog.objects.order_by('-created_at')[:4]
+
+    # --- Lấy dữ liệu YouTube channel ---
+    channel = None
     api_url = "https://www.googleapis.com/youtube/v3/channels"
     params = {
         "part": "snippet,brandingSettings,statistics",
-        "id": "UC-jtWxHaKQX7UnG_fjoSZ-Q",  # ID kênh của bạn
-        "key": "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"  # API key
+        "id": "UC-jtWxHaKQX7UnG_fjoSZ-Q",
+        "key": "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"
     }
-    channel = None
     try:
         res = requests.get(api_url, params=params)
         data = res.json()
@@ -32,11 +36,11 @@ def home(request):
 
     context = {
         'categories': categories,
-        'subcategories': subcategories,      
+        'subcategories': subcategories,
         'featured_post': featured_post,
         'latest_posts': latest_posts,
-        'posts': posts ,
-        'channel': channel  # youtube
+        'posts': posts,
+        'channel': channel,
     }
 
     return render(request, 'home.html', context)
@@ -187,3 +191,57 @@ def search(request):
     }
     return render(request, 'search.html', context)
 
+def auth_action(request):
+    """
+    Xử lý đăng nhập, đăng ký, đăng xuất chung qua action POST
+    """
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        # Logout
+        if action == "logout":
+            logout(request)
+            messages.success(request, "Đăng xuất thành công!")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+        # Login
+        elif action == "login":
+            username = request.POST.get("username", "").strip()
+            password = request.POST.get("password", "").strip()
+            user = authenticate(request, username=username, password=password)
+            if user:
+                login(request, user)
+                messages.success(request, f"Chào mừng {user.username}!")
+            else:
+                messages.error(request, "Sai tài khoản hoặc mật khẩu!")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+        # Register
+        elif action == "register":
+            username = request.POST.get("username", "").strip()
+            email = request.POST.get("email", "").strip()
+            password = request.POST.get("password", "").strip()
+            confirm_password = request.POST.get("confirmPassword", "").strip()
+
+            if not username or not email or not password or not confirm_password:
+                messages.error(request, "Vui lòng điền đầy đủ thông tin.")
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            if len(username) > 10:
+                messages.error(request, "Tài khoản tối đa 10 ký tự.")
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            if password != confirm_password:
+                messages.error(request, "Mật khẩu không khớp.")
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Tài khoản đã tồn tại.")
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "Email đã được sử dụng.")
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+            User.objects.create_user(username=username, email=email, password=password)
+            messages.success(request, "Đăng ký thành công! Bạn có thể đăng nhập ngay.")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+    # Nếu GET request, chỉ render trang bình thường
+    return redirect('home')

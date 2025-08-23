@@ -80,3 +80,16 @@ function registerFunction(){
 }
 
 
+// --- Bootstrap Toast for Django messages ---
+document.addEventListener("DOMContentLoaded", function () {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    var toastList = toastElList.map(function (toastEl) {
+        var option = {
+            delay: 3000 // tự tắt sau 3 giây
+        };
+        var t = new bootstrap.Toast(toastEl, option);
+        t.show();
+        return t;
+    });
+});
+ 

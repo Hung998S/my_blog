@@ -9,14 +9,16 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from django.contrib.messages import constants as messages
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",  # thay error bằng danger
+}
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Quick-start development settings - unsuitable for production
@@ -42,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blogs',
     'django_ckeditor_5',
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
 
 MIDDLEWARE = [
@@ -137,6 +141,9 @@ YOUTUBE_API_KEY = "AIzaSyCB5g5djPGjEgWN2xjgmOvdNs861T4Vy18"
 # Cấu hình đường dẫn cho các tệp phương tiện (media files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
 
 CKEDITOR_5_FILE_BROWSER = 'filebrowser'  # nếu bạn muốn hỗ trợ quản lý file
 CKEDITOR_5_UPLOAD_PATH = 'uploads/'  # thư mục lưu file upload
