@@ -4,6 +4,7 @@ from .models import Category, SubCategory, Blog
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render
+from django.db.models import Q,Case, When, Value, IntegerField
 
 
 def home(request):
@@ -143,3 +144,46 @@ def blog_detail(request, blog_id):
         'category': category,
         'related_blogs': related_blogs,
     })
+
+
+def search(request):
+    keyword = request.GET.get('keyword', '').strip()
+    blogs = Blog.objects.none()
+
+    if keyword:
+        # Tách từ khóa theo khoảng trắng
+        words = keyword.split()
+
+        # Build Q object cho từng từ
+        query = Q()
+        for word in words:
+            query |= Q(title__icontains=word)
+            query |= Q(short_description__icontains=word)
+            query |= Q(blog_body__icontains=word)
+
+        # Filter theo status
+        blogs = Blog.objects.filter(query, status='published').distinct()
+
+        # Sắp xếp theo mức độ liên quan: title match trước
+        blogs = blogs.annotate(
+            relevance=Case(
+                When(title__icontains=keyword, then=Value(3)),
+                When(short_description__icontains=keyword, then=Value(2)),
+                When(blog_body__icontains=keyword, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).order_by('-relevance', '-id')
+
+    # Pagination: 9 bài / trang
+    paginator = Paginator(blogs, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'blogs': page_obj.object_list,  # chỉ các blog trên trang hiện tại
+        'keyword': keyword,
+        'page_obj': page_obj,           # cần cho template pagination
+    }
+    return render(request, 'search.html', context)
+
