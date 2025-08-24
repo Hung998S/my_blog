@@ -1,0 +1,51 @@
+<div class="col-md-3">
+  <!-- Main navigation -->
+  <div class="nav flex-column nav-pills bg-light p-3 rounded shadow-sm" aria-orientation="vertical">
+
+    <a href="{% url 'dashboard' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'dashboard' %}
+           active bg-warning text-dark fw-bold
+       {% else %}text-dark{% endif %}">
+       <i class="bi bi-bar-chart-fill me-2"></i> Dashboard
+    </a>
+
+    <a href="{% url 'categories' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'categories' %}
+           active bg-warning text-dark fw-bold
+       {% else %}text-dark{% endif %}">
+       <i class="bi bi-list-ul me-2"></i> Categories
+    </a>
+
+    <a href="{% url 'subcategories' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'subcategories' and not request.resolver_match.kwargs.sub_id %}
+           active bg-warning text-dark fw-bold
+       {% else %}text-dark{% endif %}">
+       <i class="bi bi-tags me-2"></i> Subcategories
+    </a>
+
+  </div>
+
+  <!-- Categories & Subcategories -->
+  <div class="nav mt-3 flex-column nav-pills bg-light p-3 rounded shadow-sm" aria-orientation="vertical">
+    {% for category in categories %}
+        <span class="nav-link text-dark fw-bold mb-1">{{ category.category_name }}</span>
+        
+        {% for sub in category.subcategories.all %}
+            <a href="{% url 'blogs' %}?id={{ sub.id }}"
+               class="nav-link d-flex align-items-center ms-3 mb-1
+               {% if request.GET.id|default:'' == sub.id|stringformat:'s' %}
+                   active bg-warning text-dark fw-bold
+               {% else %}text-secondary{% endif %}">
+                <i class="bi bi-folder2-open me-2"></i> {{ sub.name }}
+            </a>
+        {% empty %}
+            <span class="text-muted ms-3">No subcategories</span>
+        {% endfor %}
+    {% empty %}
+        <span class="text-muted">No categories</span>
+    {% endfor %}
+  </div>
+</div>

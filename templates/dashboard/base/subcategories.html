@@ -1,0 +1,49 @@
+<div class="col-md-9">
+  <div class="card shadow-sm rounded">
+    <div class="card-header bg-dark text-light d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All SubCategories</h4>
+      <a href="" class="btn btn-sm btn-light text-dark">+ Add New SubCategory</a>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-hover table-striped table-bordered mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th style="width:5%">#</th>
+              <th style="width:15%">SubCategory Name</th>
+              <th style="width:30%">Short Description</th>
+              <th style="width:15%">Image</th>
+              <th style="width:10%">Created</th>
+              <th style="width:10%">Updated</th>
+              <th style="width:15%">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for sub in subcategories %}
+            <tr> 
+              <td>{{ forloop.counter }}</td>
+              <td>{{ sub.name }}</td>
+              <td>{{ sub.short_description|truncatewords:20 }}</td>
+              <td>
+                {% if sub.image %}
+                  <img src="{{ sub.image.url }}" alt="{{ sub.name }}" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">
+                {% else %}
+                  <span class="text-muted">No Image</span>
+                {% endif %}
+              </td>
+              <td>{{ sub.created_at|date:"Y-m-d" }}</td>
+              <td>{{ sub.updated_at|date:"Y-m-d" }}</td>
+              <td>
+                  <a href="" class="btn btn-sm btn-outline-success"><i class="fa fa-edit"></i></a>
+                  <a href="" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="text-center text-muted">No subcategories found.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="col-md-9">
+    <div class="card shadow-sm rounded mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center bg-dark text-light">
+            <h4 class="mb-0">All Posts</h4>
+            <a href="" class="btn btn-sm btn-light text-dark">+ Add New Post</a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped table-bordered mb-0 align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>SubCategory</th>
+                        <th>Author</th>
+                        <th>Thumbnail</th>
+                        <th>Description</th>
+                        <th>Featured</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    {% for post in posts %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="text-start">{{ post.title }}</td>
+                        <td>{{ post.subcategory.category.category_name }}</td>
+                        <td>{{ post.subcategory.name }}</td>
+                        <td>{{ post.author.username }}</td>
+                        <td>
+                            {% if post.blog_image %}
+                                <img src="{{ post.blog_image.url }}" alt="{{ post.title }}" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                                <span class="text-muted">No Image</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">
+                            {{ post.short_description|truncatewords:15 }}
+                        </td>
+                        <td>
+                            {% if post.is_featured %}
+                                <i class="bi bi-check-lg text-success fs-5"></i>
+                            {% else %}
+                                <i class="bi bi-x-lg text-danger fs-5"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-1">
+                                <a href="" class="btn btn-sm btn-outline-success"><i class="bi bi-pencil-fill"></i></a>
+                                <a href="" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No posts found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

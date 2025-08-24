@@ -1,0 +1,38 @@
+<div class="col-md-9">
+  <div class="row g-3">  <!-- g-3: khoảng cách giữa các card -->
+    
+    <!-- All Categories -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-list-task fs-1 text-primary mb-2"></i>
+          <h5 class="card-title text-uppercase">All Categories</h5>
+          <h2 class="display-5 fw-bold">{{ category_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- All SubCategories -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-tags fs-1 text-success mb-2"></i>
+          <h5 class="card-title text-uppercase">All SubCategories</h5>
+          <h2 class="display-5 fw-bold">{{ subcategories_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Posts -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-journal-text fs-1 text-warning mb-2"></i>
+          <h5 class="card-title text-uppercase">All Posts</h5>
+          <h2 class="display-5 fw-bold">{{ blogs_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

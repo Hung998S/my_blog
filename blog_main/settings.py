@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'blogs',
     'django_ckeditor_5',
     'crispy_forms',
-    'crispy_bootstrap4'
+    'crispy_bootstrap4',
+    'dashboards'
 ]
 
 MIDDLEWARE = [
