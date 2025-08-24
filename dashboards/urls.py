@@ -7,5 +7,4 @@ urlpatterns = [
     path('subcategories/', views.subcategories, name= 'subcategories'),
     path('blogs/', views.blogs, name= 'blogs'),
     path('dashboard/subcategories/<int:sub_id>/', views.subcategory_detail, name='subcategories'),
-
     ]
