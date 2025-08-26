@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
 from blogs.models import Category,SubCategory ,Blog
 from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import os
+from django.conf import settings
+from django.core.files.storage import default_storage
 
 # Create your views here.
 def dashboard(request):
@@ -44,8 +50,57 @@ def categories(request):
 
 
 def subcategories(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        # Thêm SubCategory
+        if action == "add_sub":
+            category_id = request.POST.get("category")
+            name = request.POST.get("name")
+            desc = request.POST.get("short_description")
+            image = request.FILES.get("image")
+
+            category = get_object_or_404(Category, id=category_id)
+            sub = SubCategory.objects.create(
+                category=category,
+                name=name,
+                short_description=desc,
+                image=image,
+            )
+            messages.success(request, f"SubCategory '{name}' created successfully!")
+
+        # Sửa SubCategory
+        elif action == "edit_sub":
+            sub_id = request.POST.get("sub_id")
+            sub = get_object_or_404(SubCategory, id=sub_id)
+
+            sub.category_id = request.POST.get("category")
+            sub.name = request.POST.get("name")
+            sub.short_description = request.POST.get("short_description")
+
+            if request.FILES.get("image"):
+                sub.image = request.FILES.get("image")
+
+            sub.save()
+            messages.success(request, f"SubCategory '{sub.name}' updated successfully!")
+
+        # Xóa SubCategory
+        elif action == "delete_sub":
+            sub_id = request.POST.get("sub_id")
+            sub = get_object_or_404(SubCategory, id=sub_id)
+            sub.delete()
+            messages.success(request, f"SubCategory '{sub.name}' deleted successfully!")
+
+        return redirect("subcategories")  # trỏ về url name="subcategories"
+
+    # GET request: load dữ liệu
     subs = SubCategory.objects.all()
-    return render(request, 'dashboard/subcategories.html', {"subcategories": subs})
+    cats = Category.objects.all()
+    return render(
+        request,
+        "dashboard/subcategories.html",
+        {"subcategories": subs, "categories": cats},
+    )
 
 
 def blogs(request):
@@ -70,3 +125,51 @@ def subcategory_detail(request, sub_id):
     return render(request, 'dashboard/blogs.html', context)
 
 
+def add_blogs(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        sub_id = request.POST.get("subcategory")
+        short_desc = request.POST.get("short_description")
+        blog_body = request.POST.get("blog_body")
+        status = request.POST.get("status", "draft")
+        is_featured = request.POST.get("is_featured") == "on"
+        image = request.FILES.get("blog_image")
+
+        if title and sub_id and blog_body:
+            sub = get_object_or_404(SubCategory, id=sub_id)
+            Blog.objects.create(
+                title=title,
+                slug=title.lower().replace(" ", "-"),  # tự tạo slug
+                subcategory=sub,
+                author=request.user,
+                short_description=short_desc,
+                blog_body=blog_body,
+                blog_image=image,
+                is_featured=is_featured,
+                status=status,
+            )
+            messages.success(request, f"Blog '{title}' created successfully!")
+            return redirect("blogs")
+        else:
+            messages.error(request, "Title, SubCategory và Blog Body là bắt buộc!")
+
+    subs = SubCategory.objects.all()
+    return render(request, "dashboard/add_blogs.html", {"subcategories": subs})
+
+
+
+@csrf_exempt
+def upload_image(request):
+    if request.method == "POST" and request.FILES.get("upload"):
+        upload = request.FILES["upload"]
+        saved_path = default_storage.save(upload.name, upload)
+        url = default_storage.url(saved_path)
+        # CKEditor 5 cần cả "uploaded":1 và "url"
+        return JsonResponse({
+            "uploaded": 1,
+            "url": url
+        })
+    return JsonResponse({
+        "uploaded": 0,
+        "error": {"message": "Invalid request"}
+    })

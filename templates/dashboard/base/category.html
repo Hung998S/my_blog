@@ -28,12 +28,12 @@
             <td>
               <!-- Nút Edit -->
               <button 
-                class="btn btn-sm btn-outline-success"
+                class="btn btn-sm btn-outline-success "
                 data-bs-toggle="modal"
                 data-bs-target="#editCategoryModal"
                 data-id="{{ cat.id }}"
                 data-name="{{ cat.category_name }}">
-                <i class="fa fa-edit"></i>
+                <i class="fa fa-edit "></i>
               </button>
 
               <!-- Nút Delete -->
@@ -98,13 +98,13 @@
           <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body bg-light">
           <div class="mb-3">
             <label class="form-label">Category Name</label>
             <input type="text" name="name" id="editCatName" class="form-control" required>
           </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer bg-dark">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-success">Update Category</button>
         </div>
