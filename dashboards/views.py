@@ -173,3 +173,62 @@ def upload_image(request):
         "uploaded": 0,
         "error": {"message": "Invalid request"}
     })
+
+def edit_blogs(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+
+    if request.method == "POST":
+        title = request.POST.get("title")
+        sub_id = request.POST.get("subcategory")
+        short_desc = request.POST.get("short_description")
+        blog_body = request.POST.get("blog_body")
+        status = request.POST.get("status", "draft")
+        is_featured = request.POST.get("is_featured") == "on"
+        image = request.FILES.get("blog_image")
+
+        # Debug thử
+        print("=== DEBUG EDIT BLOG ===")
+        print("FILES:", request.FILES)         # Xem có file nào không
+        print("Image:", image)                 # Xem ảnh nhận vào là gì
+        print("Old Image:", blog.blog_image)   # Xem ảnh cũ trong DB
+
+        if title and sub_id and blog_body:
+            sub = get_object_or_404(SubCategory, id=sub_id)
+
+            blog.title = title
+            blog.slug = title.lower().replace(" ", "-")
+            blog.subcategory = sub
+            blog.short_description = short_desc
+            blog.blog_body = blog_body
+            blog.is_featured = is_featured
+            blog.status = status
+
+            if image:  # nếu upload ảnh mới thì thay ảnh cũ
+                print(">>> Updating image to:", image.name)
+                blog.blog_image = image
+            else:
+                print(">>> Không có ảnh mới, giữ ảnh cũ.")
+
+            blog.save()
+            messages.success(request, f"Blog '{title}' updated successfully!")
+            return redirect("blogs")
+        else:
+            messages.error(request, "Title, SubCategory và Blog Body là bắt buộc!")
+
+    subs = SubCategory.objects.all()
+    return render(request, "dashboard/edit_blogs.html", {
+        "subcategories": subs,
+        "blog": blog
+    })
+
+
+def delete_blogs(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+
+    # Nếu blog có ảnh → xóa file ảnh
+    if blog.blog_image and os.path.isfile(blog.blog_image.path):
+        os.remove(blog.blog_image.path)
+
+    blog.delete()
+    messages.success(request, f"Blog '{blog.title}' deleted successfully!")
+    return redirect("blogs")

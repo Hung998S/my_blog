@@ -1,0 +1,96 @@
+{% load static %}
+
+<div class="col-md-9">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-light">
+            <h4 class="mb-0">Edit Blog</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-control" 
+                           value="{{ blog.title }}" required>
+                </div>
+
+                <!-- SubCategory -->
+                <div class="mb-3">
+                    <label class="form-label">SubCategory</label>
+                    <select name="subcategory" class="form-select" required>
+                        <option value="">-- Select SubCategory --</option>
+                        {% for sub in subcategories %}
+                            <option value="{{ sub.id }}" 
+                                {% if sub.id == blog.subcategory.id %}selected{% endif %}>
+                                {{ sub.category.category_name }} - {{ sub.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Short Description -->
+                <div class="mb-3">
+                    <label class="form-label">Short Description</label>
+                    <textarea name="short_description" class="form-control" 
+                              rows="3" maxlength="1000">{{ blog.short_description }}</textarea>
+                </div>
+
+                <!-- Blog Body (CKEditor) -->
+                <div class="mb-3">
+                    <label class="form-label">Blog Body</label>
+                    <textarea name="blog_body" id="id_blog_body" class="form-control" rows="10">
+                        {{ blog.blog_body|safe }}
+                    </textarea>
+                </div>
+
+                <!-- Thumbnail -->
+                <div class="mb-3">
+                    <label class="form-label">Thumbnail</label>
+                    {% if blog.blog_image %}
+                        <div class="mb-2">
+                            <img src="{{ blog.blog_image.url }}" alt="Current Thumbnail" width="150">
+                        </div>
+                    {% endif %}
+                    <input type="file" name="blog_image" class="form-control">
+                </div>
+
+                <!-- Featured -->
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="is_featured" class="form-check-input" id="featured"
+                           {% if blog.is_featured %}checked{% endif %}>
+                    <label for="featured" class="form-check-label">Featured</label>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="draft" {% if blog.status == "draft" %}selected{% endif %}>Draft</option>
+                        <option value="published" {% if blog.status == "published" %}selected{% endif %}>Published</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Blog</button>
+                <a href="{% url 'blogs' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+<script>
+ClassicEditor
+.create(document.querySelector('#id_blog_body'), {
+    ckfinder: {
+        uploadUrl: "{% url 'upload_image' %}"
+    }
+})
+.then(editor => {
+    document.querySelector('form').addEventListener('submit', function() {
+        document.querySelector('#id_blog_body').value = editor.getData();
+    });
+})
+.catch(error => { console.error(error); });
+</script>
