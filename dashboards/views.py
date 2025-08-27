@@ -2,12 +2,16 @@ from django.shortcuts import render, redirect
 from blogs.models import Category,SubCategory ,Blog
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import os
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+
+
 
 # Create your views here.
 def dashboard(request):
@@ -232,3 +236,94 @@ def delete_blogs(request, blog_id):
     blog.delete()
     messages.success(request, f"Blog '{blog.title}' deleted successfully!")
     return redirect("blogs")
+
+
+
+def users(request):
+    if request.method == "POST":
+        # Nếu là update (edit)
+        if "edit_user_id" in request.POST:
+            user_id = request.POST.get("edit_user_id")
+            user = get_object_or_404(User, id=user_id)
+
+            user.first_name = request.POST.get("first_name")
+            user.last_name = request.POST.get("last_name")
+            user.username = request.POST.get("username")
+            user.email = request.POST.get("email")
+            user.is_active = request.POST.get("is_active") == "true"
+            user.is_staff = request.POST.get("is_staff") == "true"
+            user.is_superuser = request.POST.get("is_superuser") == "true"
+
+            # Nếu nhập mật khẩu mới thì đổi luôn
+            password = request.POST.get("password")
+            if password:
+                user.set_password(password)
+
+            user.save()
+            messages.success(request, f"User '{user.username}' updated successfully.")
+            return redirect("users")
+
+        # Nếu là tạo mới
+        else:
+            first_name = request.POST.get("first_name")
+            last_name = request.POST.get("last_name")
+            username = request.POST.get("username")
+            email = request.POST.get("email")
+            password = request.POST.get("password")
+            password2 = request.POST.get("password2")
+
+            is_active = request.POST.get("is_active") == "true"
+            is_staff = request.POST.get("is_staff") == "true"
+            is_superuser = request.POST.get("is_superuser") == "true"
+
+            if password != password2:
+                messages.error(request, "Passwords do not match.")
+                return redirect("users")
+
+            if User.objects.filter(username=username).exclude(email=email).exists():
+                messages.error(request, "Username already exists.")
+                return redirect("users")
+
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "Email already exists.")
+                return redirect("users")
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+            user.is_active = is_active
+            user.is_staff = is_staff
+            user.is_superuser = is_superuser
+            user.save()
+
+            messages.success(request, f"User '{username}' created successfully.")
+            return redirect("users")
+
+    # GET → hiển thị danh sách
+    users = User.objects.all().order_by("id")
+    return render(request, "dashboard/users.html", {"users": users})
+
+
+@login_required
+def delete_user(request, user_id):
+    # Lấy user cần xóa
+    user_to_delete = get_object_or_404(User, id=user_id)
+
+    # Chỉ admin mới xóa
+    if not request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, "You do not have permission to delete this user.")
+        return redirect('users')
+
+    # Không cho xóa chính mình
+    if user_to_delete == request.user:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect('users')
+
+    username = user_to_delete.username
+    user_to_delete.delete()
+    messages.success(request, f"User '{username}' has been deleted successfully.")
+    return redirect('users')

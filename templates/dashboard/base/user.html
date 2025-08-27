@@ -1,0 +1,232 @@
+<!-- right sidebar -->
+<div class="col-md-9">
+
+  <!-- Hiển thị messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">All Users</h3>
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+      <i class="fa fa-user-plus me-1"></i> Add New User
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="card shadow-sm rounded-3">
+    <div class="card-body p-0">
+      <table class="table table-hover table-striped mb-0 align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Staff</th>
+            <th>Superuser</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><strong>{{ user.first_name }} {{ user.last_name }}</strong></td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              {% if user.is_active %}
+                <span class="badge bg-success">Active</span>
+              {% else %}
+                <span class="badge bg-secondary">Inactive</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {% if user.is_staff %}
+                <i class="fa fa-check text-success"></i>
+              {% else %}
+                <i class="fa fa-times text-danger"></i>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {% if user.is_superuser %}
+                <i class="fa fa-check text-success"></i>
+              {% else %}
+                <i class="fa fa-times text-danger"></i>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {% if request.user.is_staff or request.user.is_superuser %}
+              <!-- Edit -->
+              <a href="#" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">
+                <i class="fa fa-edit text-success"></i>
+              </a>
+              &nbsp;
+              <!-- Delete -->
+              <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete {{ user.username }}?');">
+                <i class="fa fa-trash"></i>
+              </a>
+              {% else %}
+              <span class="text-muted">No actions</span>
+              {% endif %}
+            </td>
+          </tr>
+
+          <!-- Modal Edit User (bên trong vòng lặp) -->
+        {% if request.user.is_staff or request.user.is_superuser %}
+            <div class="modal fade" id="editUserModal{{ user.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content shadow-lg">
+                <form method="POST" action="{% url 'users' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="edit_user_id" value="{{ user.id }}">
+
+                    <!-- Header -->
+                    <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Edit User: {{ user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body bg-light p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+                        </div>
+                        <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" value="{{ user.username }}">
+                        </div>
+                        <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" value="{{ user.email }}">
+                        </div>
+                        <div class="col-md-6">
+                        <label class="form-label">New Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" name="password">
+                        </div>
+                        <div class="col-md-2">
+                        <label class="form-label">Active</label>
+                        <select name="is_active" class="form-control">
+                            <option value="true" {% if user.is_active %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if not user.is_active %}selected{% endif %}>No</option>
+                        </select>
+                        </div>
+                        <div class="col-md-2">
+                        <label class="form-label">Staff</label>
+                        <select name="is_staff" class="form-control">
+                            <option value="true" {% if user.is_staff %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if not user.is_staff %}selected{% endif %}>No</option>
+                        </select>
+                        </div>
+                        <div class="col-md-2">
+                        <label class="form-label">Superuser</label>
+                        <select name="is_superuser" class="form-control">
+                            <option value="true" {% if user.is_superuser %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if not user.is_superuser %}selected{% endif %}>No</option>
+                        </select>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer bg-dark">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+{% endif %}
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Add User -->
+{% if request.user.is_staff or request.user.is_superuser %}
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <form method="POST" action="{% url 'users' %}">
+        {% csrf_token %}
+        <!-- Header -->
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="addUserModalLabel">
+            <i class="fa fa-user-plus me-2"></i> Add New User
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body bg-light p-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Username</label>
+              <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Confirm Password</label>
+              <input type="password" name="password2" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="is_active" value="true" checked>
+                <label class="form-check-label">Active</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="is_staff" value="true">
+                <label class="form-check-label">Staff</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="is_superuser" value="true">
+                <label class="form-check-label">Superuser</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer bg-dark">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success"><i class="fa fa-save me-1"></i> Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+

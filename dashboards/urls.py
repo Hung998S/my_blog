@@ -13,6 +13,8 @@ urlpatterns = [
     path('upload-image/', views.upload_image, name='upload_image'),
     path('blogs/<int:blog_id>/edit/', views.edit_blogs, name="edit_blogs"),
     path('blogs/<int:blog_id>/delete/', views.delete_blogs, name="delete_blogs"),
+    path('user/',views.users, name="users" ),
+    path('user/delete/<int:user_id>/', views.delete_user, name='delete_user'),
 
     ]
 if settings.DEBUG:
