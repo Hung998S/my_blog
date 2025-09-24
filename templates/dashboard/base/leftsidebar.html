@@ -40,6 +40,14 @@
        <i class="bi bi-flag me-2"></i> Countries
     </a>
 
+    <a href="{% url 'detail_countries' %}" 
+    class="nav-link d-flex align-items-center mb-2
+    {% if request.resolver_match.url_name == 'detail_countries' %}
+        active bg-warning text-dark fw-bold
+    {% else %}text-dark{% endif %}">
+    <i class="bi bi-journal-text me-2"></i> Detail Countries
+    </a>
+
     <a href="{% url 'users' %}" 
        class="nav-link d-flex align-items-center mb-2
        {% if request.resolver_match.url_name == 'users' %}

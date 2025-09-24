@@ -1,10 +1,30 @@
+{% load static %}
+
+<style>
+.detail-country-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    background: url("{% static 'images/bg.jpg' %}") no-repeat center center; 
+    background-size: cover;
+    color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.detail-country-card:hover {
+    transform: translateY(-5px);
+}
+</style>
+
 <div class="col-12 col-md-9">
     <h1 class="mb-4 text-center">{{ country.name }}</h1>
 
     <!-- Card thông tin + ảnh -->
     <div class="card shadow-sm mb-3">
         <div class="row g-0">
-            <!-- Cột thông tin (trái) -->
             <div class="col-md-6">
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
@@ -21,7 +41,6 @@
                 </div>
             </div>
 
-            <!-- Cột ảnh (phải) -->
             <div class="col-md-6 text-center pb-3">
                 {% if country.flag %}
                 <div class="mb-3">
@@ -40,5 +59,17 @@
         </div>
     </div>
 
-
+    <div class="row">
+        {% if detailcountries %}
+            {% for detail in detailcountries %}
+                <div class="col-md-4 mb-3">
+                    <div class="detail-country-card">
+                        {{ detail.name }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted text-center w-100">No details available.</p>
+        {% endif %}
+    </div>
 </div>

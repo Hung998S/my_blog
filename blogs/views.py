@@ -1,6 +1,6 @@
 import requests
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, SubCategory, Blog, Comment , Country 
+from .models import Category, SubCategory, Blog, Comment , Country ,ChildCategory
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render
@@ -119,11 +119,28 @@ def childcategory_detail(request, subcategory_id):
 
 def country_detail(request, pk):
     country = get_object_or_404(Country, pk=pk)
+    # Lấy tất cả DetailCountry thuộc ChildCategory của Country
+    detailcountries = country.childcategory.detail_countries.all()
+
     context = {
-        'country': country
+        'country': country,
+        'detailcountries': detailcountries
     }
     return render(request, 'country_detail.html', context)
 
+
+def detailcountry_detail(request, childcategory_id):
+    # Lấy ChildCategory
+    childcategory = get_object_or_404(ChildCategory, id=childcategory_id)
+
+    # Lấy tất cả DetailCountry thuộc ChildCategory này
+    detailcountries = childcategory.detail_countries.all()  # dùng related_name
+
+    context = {
+        'childcategory': childcategory,
+        'detailcountries': detailcountries,
+    }
+    return render(request, 'country_detail.html', context)
 
 
 def category_blog(request, subcategory_id):

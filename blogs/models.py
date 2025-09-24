@@ -110,9 +110,27 @@ class Country(models.Model):
         return reverse("country_detail", kwargs={"pk": self.pk})
 
 
+class DetailCountry(models.Model):
+    # Liên kết với ChildCategory
+    childcategory = models.ForeignKey(
+        ChildCategory,
+        on_delete=models.CASCADE,
+        related_name='detail_countries',
+        verbose_name="Child Category"
+    )
 
+    # Tên danh mục (field chính)
+    name = models.CharField(max_length=200, verbose_name="Tên danh mục")
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = "Detail Countries"
+
+    def __str__(self):
+        return self.name
+    
 
 class Blog(models.Model):
     title = models.CharField(max_length=100, unique=True)

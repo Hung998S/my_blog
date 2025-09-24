@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from blogs.models import Category,SubCategory ,Blog, ChildCategory, Country  
+from blogs.models import Category,SubCategory ,Blog, ChildCategory, Country  ,DetailCountry
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
@@ -271,6 +271,46 @@ def countries(request):
             "childcategories": childcategories,
         },
     )
+    
+def detail_countries(request):
+    detailcountries = DetailCountry.objects.all()
+    childcategories = ChildCategory.objects.all()
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        # Thêm mới
+        if action == 'add_detailcountry':
+            child_id = request.POST.get('childcategory')
+            name = request.POST.get('name')
+            child = get_object_or_404(ChildCategory, id=child_id)
+            DetailCountry.objects.create(childcategory=child, name=name)
+            return redirect('detail_countries')
+
+        # Chỉnh sửa
+        elif action == 'edit_detailcountry':
+            detail_id = request.POST.get('detailcountry_id')
+            name = request.POST.get('name')
+            child_id = request.POST.get('childcategory')
+            detail = get_object_or_404(DetailCountry, id=detail_id)
+            child = get_object_or_404(ChildCategory, id=child_id)
+            detail.childcategory = child
+            detail.name = name
+            detail.save()
+            return redirect('detail_countries')
+
+        # Xóa
+        elif action == 'delete_detailcountry':
+            detail_id = request.POST.get('detailcountry_id')
+            detail = get_object_or_404(DetailCountry, id=detail_id)
+            detail.delete()
+            return redirect('detail_countries')
+
+    context = {
+        'detailcountries': detailcountries,
+        'childcategories': childcategories,
+    }
+    return render(request, 'dashboard/detail_countries.html', context)
 
 
 def blogs(request):
