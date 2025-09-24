@@ -754,7 +754,7 @@ a:hover {
   --main-focus: #2d8cf0;
 
   width: 100%;              /* ✅ full chiều ngang col */
-  height: 340px;          
+  height: 350px;          
   background: var(--bg-color);
   border: 2px solid var(--main-color);
   box-shadow: 4px 4px var(--main-color);
@@ -1067,3 +1067,5 @@ a:hover {
 .blog-content figure.media {
     margin: 1em 0;
 }
+
+

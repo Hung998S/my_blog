@@ -25,20 +25,101 @@
             </div>
         </div>
 
-        {% comment %} --------------- comment -------------------- {% endcomment %}
-        <div class="comment-form">
-            <h3>Để lại bình luận</h3>
-            <form action="#" method="POST">
+{% comment %} ---------------- Comment Section ---------------- {% endcomment %}
+<div class="comment-section">
 
-                <div class="form-group">
-                    <label for="comment">Bình luận</label>
-                    <textarea id="comment" name="comment" rows="5" placeholder="Viết bình luận..." required></textarea>
-                </div>
+    <!-- Comment Form -->
+    <div class="comment-form mb-4">
+        <h3>Để lại bình luận</h3>
 
-                <button type="submit">Gửi bình luận</button>
+        {% if user.is_authenticated and user.is_active %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <textarea name="comment" class="form-control mb-2" rows="5" placeholder="Viết bình luận..." required></textarea>
+                <button type="submit" class="btn btn-primary">Gửi bình luận</button>
             </form>
-        </div>
+
+        {% elif user.is_authenticated and not user.is_active %}
+            <div class="alert alert-warning">
+                Tài khoản của bạn chưa active, không thể bình luận.
+            </div>
+
+        {% else %}
+            <div class="mb-3">
+                <label for="comment" class="form-label">Bình luận</label>
+                <textarea id="comment" class="form-control" rows="5" placeholder="Bạn chưa đăng nhập, đăng nhập ngay..." readonly></textarea>
+            </div>
+            <div class="alert alert-info">
+                Bạn chưa đăng nhập, <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">đăng nhập ngay</a>.
+            </div>
+        {% endif %}
     </div>
+
+    <hr>
+
+    <!-- Comment List -->
+    <div class="comments-list mb-3">
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment-item mb-3 p-2 border rounded">
+                    <strong>
+                        {% if comment.user.is_superuser %}
+                            Quản trị viên:
+                        {% endif %}
+                        {{ comment.user.username }}
+                    </strong>
+                    <p>{{ comment.content }}</p>
+                    <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+
+                    {% if user.is_superuser %}
+                        <form action="" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="delete_comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="btn btn-sm btn-danger ms-2">Xóa</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            <nav aria-label="Comment pagination">
+                <ul class="pagination justify-content-center">
+                    {% if comments.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ comments.previous_page_number }}">« Trước</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">« Trước</span></li>
+                    {% endif %}
+
+                    {% for num in comments.paginator.page_range %}
+                        {% if comments.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if comments.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ comments.next_page_number }}">Sau »</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Sau »</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+        {% else %}
+            <p>Chưa có bình luận nào. Hãy là người đầu tiên!</p>
+        {% endif %}
+    </div>
+
+</div>
+</div>
+
+
+
 
 <a class="textAi">Bài viết Liên quan</a>
 
@@ -70,3 +151,15 @@
     </div>
 </div>
 
+<!-- Tự động mở modal khi click textarea nếu chưa login -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const commentBox = document.querySelector(".comment-form textarea[readonly]");
+    if (commentBox) {
+        commentBox.addEventListener("focus", function() {
+            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            modal.show();
+        });
+    }
+});
+</script>

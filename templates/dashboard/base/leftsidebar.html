@@ -26,6 +26,20 @@
        <i class="bi bi-tags me-2"></i> Subcategories
     </a>
 
+    <a href="{% url 'childcategories' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'childcategories' %} active bg-warning text-dark fw-bold {% else %}text-dark{% endif %}">
+       <i class="bi bi-diagram-3 me-2"></i> Child Categories
+    </a>
+
+    <a href="{% url 'countries' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'countries' %}
+           active bg-warning text-dark fw-bold
+       {% else %}text-dark{% endif %}">
+       <i class="bi bi-flag me-2"></i> Countries
+    </a>
+
     <a href="{% url 'users' %}" 
        class="nav-link d-flex align-items-center mb-2
        {% if request.resolver_match.url_name == 'users' %}

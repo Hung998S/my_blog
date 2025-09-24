@@ -7,79 +7,84 @@
         + Add New SubCategory
       </button>
     </div>
+
     <div class="card-body p-0">
       <table class="table table-hover table-striped table-bordered mb-0">
-          <thead class="table-dark">
-            <tr>
-              <th style="width:5%">#</th>
-              <th style="width:15%">Category</th>
-              <th style="width:20%">SubCategory Name</th>
-              <th style="width:25%">Short Description</th>
-              <th style="width:10%">Image</th>
-              <th style="width:10%">Created</th>
-              <th style="width:10%">Updated</th>
-              <th style="width:15%">Action</th>
-            </tr>
-          </thead>
-          <tbody>
+        <thead class="table-dark">
+          <tr>
+            <th style="width:5%">#</th>
+            <th style="width:15%">Category</th>
+            <th style="width:20%">SubCategory Name</th>
+            <th style="width:20%">Short Description</th>
+            <th style="width:10%">Icon</th>
+            <th style="width:10%">Image</th>
+            <th style="width:10%">Created</th>
+            <th style="width:10%">Updated</th>
+            <th style="width:15%">Action</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for sub in subcategories %}
-            <tr> 
-              <td>{{ forloop.counter }}</td>
-              <td>{{ sub.category.category_name }}</td>
-              <td>{{ sub.name }}</td>
-              <td>{{ sub.short_description|truncatewords:15 }}</td>
-              <td>
-                {% if sub.image %}
-                  <img src="{{ sub.image.url }}" alt="{{ sub.name }}" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">
-                {% else %}
-                  <span class="text-muted">No Image</span>
-                {% endif %}
-              </td>
-              <td>{{ sub.created_at|date:"Y-m-d" }}</td>
-              <td>{{ sub.updated_at|date:"Y-m-d" }}</td>
-              <td>
-                <div class="btn-group" role="group">
-                  <!-- Nút Edit -->
-                  <button 
-                    class="btn btn-sm btn-outline-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editSubCategoryModal"
-                    data-id="{{ sub.id }}"
-                    data-category="{{ sub.category.id }}"
-                    data-name="{{ sub.name }}"
-                    data-desc="{{ sub.short_description }}"
-                    data-image="{% if sub.image %}{{ sub.image.url }}{% endif %}"
-                    style="margin-right:6px;">
-                    
-                    <i class="fa fa-edit"></i>
-                  </button>
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ sub.category.category_name }}</td>
+            <td>{{ sub.name }}</td>
+            <td>{{ sub.short_description|truncatewords:12 }}</td>
+            <td>
+              {% if sub.icon %}
+                <img src="{{ sub.icon.url }}" alt="{{ sub.name }}" class="img-thumbnail" style="width:40px; height:40px; object-fit:contain;">
+              {% else %}
+                <span class="text-muted">No Icon</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if sub.image %}
+                <img src="{{ sub.image.url }}" alt="{{ sub.name }}" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">
+              {% else %}
+                <span class="text-muted">No Image</span>
+              {% endif %}
+            </td>
+            <td>{{ sub.created_at|date:"Y-m-d" }}</td>
+            <td>{{ sub.updated_at|date:"Y-m-d" }}</td>
+            <td>
+              <div class="btn-group">
+                <button 
+                  class="btn btn-sm btn-outline-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editSubCategoryModal"
+                  data-id="{{ sub.id }}"
+                  data-category="{{ sub.category.id }}"
+                  data-name="{{ sub.name }}"
+                  data-desc="{{ sub.short_description }}"
+                  data-icon="{% if sub.icon %}{{ sub.icon.url }}{% endif %}"
+                  data-image="{% if sub.image %}{{ sub.image.url }}{% endif %}">
+                  <i class="fa fa-edit"></i>
+                </button>
 
-                  <!-- Nút Delete -->
-                  <form method="post" class="d-inline">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="delete_sub">
-                    <input type="hidden" name="sub_id" value="{{ sub.id }}">
-                    <button type="submit " class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this subcategory?');">
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </form>
-                </div>
-              </td>
-            </tr>
+                <form method="post" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_sub">
+                  <input type="hidden" name="sub_id" value="{{ sub.id }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this subcategory?');">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
           {% empty %}
-            <tr>
-              <td colspan="8" class="text-center text-muted">No subcategories found.</td>
-            </tr>
+          <tr>
+            <td colspan="9" class="text-center text-muted">No subcategories found.</td>
+          </tr>
           {% endfor %}
-          </tbody>
-        </table>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
-
 <!-- Modal Add SubCategory -->
-<div class="modal fade" id="addSubCategoryModal" tabindex="-1" aria-labelledby="addSubCategoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="addSubCategoryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <form method="post" enctype="multipart/form-data">
@@ -92,16 +97,14 @@
         </div>
 
         <div class="modal-body bg-light">
-          <div class="container-fluid"> <!-- ✅ bọc container -->
-            
-            <!-- Hàng 1 -->
+          <div class="container-fluid">
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Category</label>
                 <select name="category" class="form-select" required>
                   <option value="">-- Select Category --</option>
                   {% for cat in categories %}
-                    <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                  <option value="{{ cat.id }}">{{ cat.category_name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -111,7 +114,6 @@
               </div>
             </div>
 
-            <!-- Hàng 2 -->
             <div class="row mb-3">
               <div class="col-md-12">
                 <label class="form-label">Short Description</label>
@@ -119,14 +121,16 @@
               </div>
             </div>
 
-            <!-- Hàng 3 -->
             <div class="row mb-3">
-              <div class="col-md-12">
+              <div class="col-md-6">
+                <label class="form-label">Icon</label>
+                <input type="file" name="icon" class="form-control">
+              </div>
+              <div class="col-md-6">
                 <label class="form-label">Image</label>
                 <input type="file" name="image" class="form-control">
               </div>
             </div>
-
           </div>
         </div>
 
@@ -139,10 +143,8 @@
   </div>
 </div>
 
-
-
 <!-- Modal Edit SubCategory -->
-<div class="modal fade" id="editSubCategoryModal" tabindex="-1" aria-labelledby="editSubCategoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="editSubCategoryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <form method="post" enctype="multipart/form-data">
@@ -157,14 +159,12 @@
 
         <div class="modal-body bg-light">
           <div class="container-fluid">
-            
-            <!-- Hàng 1 -->
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Category</label>
                 <select name="category" id="editSubCategorySelect" class="form-select" required>
                   {% for cat in categories %}
-                    <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                  <option value="{{ cat.id }}">{{ cat.category_name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -174,7 +174,6 @@
               </div>
             </div>
 
-            <!-- Hàng 2 -->
             <div class="row mb-3">
               <div class="col-md-12">
                 <label class="form-label">Short Description</label>
@@ -182,17 +181,18 @@
               </div>
             </div>
 
-            <!-- Hàng 3 -->
             <div class="row mb-3">
-              <div class="col-md-12">
+              <div class="col-md-6">
+                <label class="form-label">Change Icon</label>
+                <input type="file" name="icon" class="form-control">
+                <div id="currentIcon" class="mt-2"></div>
+              </div>
+              <div class="col-md-6">
                 <label class="form-label">Change Image</label>
                 <input type="file" name="image" class="form-control">
-                <div id="currentImage" class="mt-2">
-                  <!-- Hiện ảnh cũ ở đây bằng JS -->
-                </div>
+                <div id="currentImage" class="mt-2"></div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -205,9 +205,6 @@
   </div>
 </div>
 
-
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   var editSubModal = document.getElementById("editSubCategoryModal");
@@ -216,22 +213,22 @@ document.addEventListener("DOMContentLoaded", function () {
     var subId = button.getAttribute("data-id");
     var subName = button.getAttribute("data-name");
     var subDesc = button.getAttribute("data-desc");
-    var subStatus = button.getAttribute("data-status");
     var subCategory = button.getAttribute("data-category");
+    var subIcon = button.getAttribute("data-icon");
     var subImage = button.getAttribute("data-image");
 
     document.getElementById("editSubId").value = subId;
     document.getElementById("editSubName").value = subName;
     document.getElementById("editSubDesc").value = subDesc;
-    document.getElementById("editSubStatus").value = subStatus;
     document.getElementById("editSubCategorySelect").value = subCategory;
 
-    var imgDiv = document.getElementById("currentImage");
-    if (subImage) {
-      imgDiv.innerHTML = '<img src="' + subImage + '" class="img-thumbnail" style="width:80px; height:80px; object-fit:cover;">';
-    } else {
-      imgDiv.innerHTML = '<span class="text-muted">No current image</span>';
-    }
+    document.getElementById("currentIcon").innerHTML = subIcon
+      ? `<img src="${subIcon}" class="img-thumbnail" style="width:40px; height:40px; object-fit:contain;">`
+      : `<span class="text-muted">No current icon</span>`;
+
+    document.getElementById("currentImage").innerHTML = subImage
+      ? `<img src="${subImage}" class="img-thumbnail" style="width:60px; height:60px; object-fit:cover;">`
+      : `<span class="text-muted">No current image</span>`;
   });
 });
 </script>

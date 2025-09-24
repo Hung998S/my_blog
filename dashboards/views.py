@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from blogs.models import Category,SubCategory ,Blog
+from blogs.models import Category,SubCategory ,Blog, ChildCategory, Country  
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
@@ -8,12 +8,12 @@ import os
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-
-
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 
 
 # Create your views here.
+@user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
     category_counts = Category.objects.all().count()
     subcategories_counts = SubCategory.objects.all().count()
@@ -34,15 +34,22 @@ def categories(request):
         action = request.POST.get("action")
         cat_id = request.POST.get("cat_id")
         name = request.POST.get("name")
+        icon = request.FILES.get("icon")  # Lấy file icon từ form
 
+        # ADD
         if action == "add" and name:
-            Category.objects.create(category_name=name)
+            Category.objects.create(category_name=name, icon=icon)
 
+        # EDIT
         elif action == "edit" and cat_id and name:
             category = get_object_or_404(Category, id=cat_id)
             category.category_name = name
+            # Nếu có file icon mới thì cập nhật icon
+            if icon:
+                category.icon = icon
             category.save()
 
+        # DELETE
         elif action == "delete" and cat_id:
             category = get_object_or_404(Category, id=cat_id)
             category.delete()
@@ -63,6 +70,7 @@ def subcategories(request):
             name = request.POST.get("name")
             desc = request.POST.get("short_description")
             image = request.FILES.get("image")
+            icon = request.FILES.get("icon")  # ✅ Lấy file icon từ form
 
             category = get_object_or_404(Category, id=category_id)
             sub = SubCategory.objects.create(
@@ -70,6 +78,7 @@ def subcategories(request):
                 name=name,
                 short_description=desc,
                 image=image,
+                icon=icon,  # ✅ Lưu icon
             )
             messages.success(request, f"SubCategory '{name}' created successfully!")
 
@@ -85,6 +94,9 @@ def subcategories(request):
             if request.FILES.get("image"):
                 sub.image = request.FILES.get("image")
 
+            if request.FILES.get("icon"):  # ✅ Nếu có icon mới thì cập nhật
+                sub.icon = request.FILES.get("icon")
+
             sub.save()
             messages.success(request, f"SubCategory '{sub.name}' updated successfully!")
 
@@ -95,7 +107,7 @@ def subcategories(request):
             sub.delete()
             messages.success(request, f"SubCategory '{sub.name}' deleted successfully!")
 
-        return redirect("subcategories")  # trỏ về url name="subcategories"
+        return redirect("subcategories")
 
     # GET request: load dữ liệu
     subs = SubCategory.objects.all()
@@ -104,6 +116,160 @@ def subcategories(request):
         request,
         "dashboard/subcategories.html",
         {"subcategories": subs, "categories": cats},
+    )
+
+
+def childcategories(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        # Thêm ChildCategory
+        if action == "add_child":
+            subcategory_id = request.POST.get("subcategory")
+            title = request.POST.get("title")
+            desc = request.POST.get("short_description")
+            image = request.FILES.get("image")
+
+            subcategory = get_object_or_404(SubCategory, id=subcategory_id)
+            ChildCategory.objects.create(
+                subcategory=subcategory,
+                title=title,
+                short_description=desc,
+                image=image,
+            )
+            messages.success(request, f"ChildCategory '{title}' created successfully!")
+
+        # Sửa ChildCategory
+        elif action == "edit_child":
+            child_id = request.POST.get("child_id")
+            child = get_object_or_404(ChildCategory, id=child_id)
+
+            child.subcategory_id = request.POST.get("subcategory")
+            child.title = request.POST.get("title")
+            child.short_description = request.POST.get("short_description")
+
+            if request.FILES.get("image"):
+                child.image = request.FILES.get("image")
+
+            child.save()
+            messages.success(request, f"ChildCategory '{child.title}' updated successfully!")
+
+        # Xóa ChildCategory
+        elif action == "delete_child":
+            child_id = request.POST.get("child_id")
+            child = get_object_or_404(ChildCategory, id=child_id)
+            child.delete()
+            messages.success(request, f"ChildCategory '{child.title}' deleted successfully!")
+
+        return redirect("childcategories")
+
+    # GET request: load dữ liệu + phân trang
+    children = ChildCategory.objects.all().order_by("-created_at")
+    subcategories = SubCategory.objects.all()
+
+    paginator = Paginator(children, 20)  
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "dashboard/childcategories.html",
+        {
+            "childcategories": page_obj,
+            "page_obj": page_obj,
+            "subcategories": subcategories,
+        },
+    )
+    
+    
+def countries(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        # ➕ Thêm Country
+        if action == "add_country":
+            childcategory_id = request.POST.get("childcategory")
+            name = request.POST.get("name")
+            capital = request.POST.get("capital")
+            geography = request.POST.get("geography")
+            area = request.POST.get("area")
+            population = request.POST.get("population")
+            language = request.POST.get("language")
+            government = request.POST.get("government")
+            economy = request.POST.get("economy")
+            currency = request.POST.get("currency")
+            climate = request.POST.get("climate")
+            flag = request.FILES.get("flag")
+            map_image = request.FILES.get("map")
+
+            childcategory = get_object_or_404(ChildCategory, id=childcategory_id)
+            Country.objects.create(
+                childcategory=childcategory,
+                name=name,
+                capital=capital,
+                geography=geography,
+                area=area,
+                population=population,
+                language=language,
+                government=government,
+                economy=economy,
+                currency=currency,
+                climate=climate,
+                flag=flag,
+                map=map_image
+            )
+            messages.success(request, f"Country '{name}' created successfully!")
+
+        # ✏️ Sửa Country
+        elif action == "edit_country":
+            country_id = request.POST.get("country_id")
+            country = get_object_or_404(Country, id=country_id)
+
+            country.childcategory_id = request.POST.get("childcategory")
+            country.name = request.POST.get("name")
+            country.capital = request.POST.get("capital")
+            country.geography = request.POST.get("geography")
+            country.area = request.POST.get("area")
+            country.population = request.POST.get("population")
+            country.language = request.POST.get("language")
+            country.government = request.POST.get("government")
+            country.economy = request.POST.get("economy")
+            country.currency = request.POST.get("currency")
+            country.climate = request.POST.get("climate")
+
+            if request.FILES.get("flag"):
+                country.flag = request.FILES.get("flag")
+            if request.FILES.get("map"):
+                country.map = request.FILES.get("map")
+
+            country.save()
+            messages.success(request, f"Country '{country.name}' updated successfully!")
+
+        # 🗑️ Xóa Country
+        elif action == "delete_country":
+            country_id = request.POST.get("country_id")
+            country = get_object_or_404(Country, id=country_id)
+            country.delete()
+            messages.success(request, f"Country '{country.name}' deleted successfully!")
+
+        return redirect("countries")
+
+    # GET request: load danh sách + phân trang
+    countries = Country.objects.all().order_by("name")
+    childcategories = ChildCategory.objects.all()
+
+    paginator = Paginator(countries, 20)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "dashboard/countries.html",
+        {
+            "countries": page_obj,
+            "page_obj": page_obj,
+            "childcategories": childcategories,
+        },
     )
 
 

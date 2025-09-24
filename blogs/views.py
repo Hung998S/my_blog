@@ -1,6 +1,6 @@
 import requests
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, SubCategory, Blog
+from .models import Category, SubCategory, Blog, Comment , Country 
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render
@@ -8,11 +8,11 @@ from django.db.models import Q,Case, When, Value, IntegerField
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 def home(request):
     # --- Lấy dữ liệu cho trang ---
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('created_at')
     subcategories = SubCategory.objects.all()
     featured_post = Blog.objects.filter(is_featured=True, status='published')
     posts = Blog.objects.filter(is_featured=False, status='published')
@@ -76,25 +76,55 @@ def category_detail(request, category_id):
 
 
 def subcategory_detail(request, category_id):
+    # Lấy category
     category = get_object_or_404(Category, id=category_id)
+    
+    # Lấy tất cả subcategories thuộc category này
     subcategories = category.subcategories.all()
-    blogs = Blog.objects.filter( subcategory__in=subcategories,status='published') 
     
     # Pagination cho subcategories
     paginator = Paginator(subcategories, 5)  # 5 sub mỗi trang
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    
-    # Bài nổi bật
-    featured_post = Blog.objects.filter(is_featured=True, status='published')
-    return render(request, 'subcategory_detail.html', {
+    context = {
         'category': category,
         'subcategories': subcategories,
-        'page_obj': page_obj, 
-        'blogs': blogs,
-        'featured_post': featured_post,
+        'page_obj': page_obj,
+    }
+    return render(request, 'subcategory_detail.html', context)
+
+def childcategory_detail(request, subcategory_id):
+    # Lấy subcategory
+    subcategory = get_object_or_404(SubCategory, id=subcategory_id)
+
+    # Lấy category cha
+    category = subcategory.category
+
+    # Lấy tất cả childcategories thuộc subcategory này
+    childcategories = subcategory.childcategories.all()
+    
+    # Pagination cho childcategories (9 per page)
+    from django.core.paginator import Paginator
+    paginator = Paginator(childcategories, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'childcategory_detail.html', {
+        'subcategory': subcategory,
+        'category': category,  # thêm dòng này
+        'childcategories': childcategories,
+        'page_obj': page_obj,
     })
+
+def country_detail(request, pk):
+    country = get_object_or_404(Country, pk=pk)
+    context = {
+        'country': country
+    }
+    return render(request, 'country_detail.html', context)
+
+
 
 def category_blog(request, subcategory_id):
     # Lấy đúng subcategory theo id
@@ -135,18 +165,53 @@ def youtube_info(request):
 
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
-    subcategory = blog.subcategory           # đây là SubCategory của blog
-    category = subcategory.category          # đây là Category cha
-    
-    related_blogs = Blog.objects.filter(subcategory=blog.subcategory).exclude(id=blog.id).order_by('-created_at')[:4]
+    subcategory = blog.subcategory
+    category = subcategory.category
+
+    # Lấy blog liên quan
+    related_blogs = Blog.objects.filter(subcategory=subcategory).exclude(id=blog.id).order_by('-created_at')[:4]
     if not related_blogs.exists():
         related_blogs = Blog.objects.exclude(id=blog.id).order_by('-created_at')[:4]
-        
+
+    # Xử lý POST: thêm comment hoặc xóa comment (nếu superuser)
+    if request.method == "POST":
+        # Xóa comment (superuser)
+        if 'delete_comment_id' in request.POST and request.user.is_superuser:
+            comment_id = request.POST.get('delete_comment_id')
+            comment_to_delete = get_object_or_404(Comment, id=comment_id)
+            comment_to_delete.delete()
+            messages.success(request, "Comment đã được xóa!")
+            return redirect(f'/blog/{blog_id}/')
+
+        # Thêm comment
+        elif request.user.is_authenticated:
+            if request.user.is_active:
+                content = request.POST.get("comment")
+                if content:
+                    Comment.objects.create(
+                        blog=blog,
+                        user=request.user,
+                        content=content
+                    )
+                    messages.success(request, "Bình luận của bạn đã được gửi!")
+                else:
+                    messages.error(request, "Bình luận không được để trống!")
+            else:
+                messages.warning(request, "Tài khoản chưa active, không thể bình luận.")
+            return redirect(f'/blog/{blog_id}/')
+
+    # Lấy comment với pagination
+    comment_list = Comment.objects.filter(blog=blog).order_by('-created_at')
+    paginator = Paginator(comment_list, 5)  # 5 comment/trang
+    page_number = request.GET.get('page')
+    comments = paginator.get_page(page_number)
+
     return render(request, 'blog_detail.html', {
         'blog': blog,
         'subcategory': subcategory,
         'category': category,
         'related_blogs': related_blogs,
+        'comments': comments,
     })
 
 
@@ -245,3 +310,27 @@ def auth_action(request):
 
     # Nếu GET request, chỉ render trang bình thường
     return redirect('home')
+
+@login_required
+def post_comment(request, post_id):
+    post = get_object_or_404(Blog, id=post_id)
+
+    if not request.user.is_active:
+        messages.error(request, "Tài khoản của bạn chưa active, không thể bình luận.")
+        return redirect(post.get_absolute_url())
+
+    if request.method == "POST":
+        content = request.POST.get("comment")
+        if content:
+            label = "Quản trị viên" if request.user.is_superuser else ""
+            Comment.objects.create(
+                blog=post,
+                user=request.user,
+                content=content,
+                label=label
+            )
+            messages.success(request, "Bình luận của bạn đã được gửi!")
+        else:
+            messages.error(request, "Bình luận không được để trống!")
+
+    return redirect(post.get_absolute_url())

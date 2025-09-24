@@ -16,11 +16,11 @@
     <div class="row g-0">
       <div class="col-md-2">
         {% if sub.image %}
-          <a href="{% url 'category_blog' sub.id %}">
+          <a href="{% url 'childcategory_detail' sub.id %}">
             <img src="{{ sub.image.url }}" style="width: 200px;" class="img-fluid rounded-start pt-3 ps-2" alt="{{ sub.name }}">
           </a>
         {% else %}
-          <a href="{% url 'category_blog' sub.id %}">
+          <a href="{% url 'childcategory_detail' sub.id %}">
             <img src="{% static 'images/default.png' %}" style="width: 200px;" class="img-fluid rounded-start pt-3 ps-2" alt="No image">
           </a>
         {% endif %}
@@ -28,10 +28,10 @@
       <div class="col-md-10">
         <div class="card-body">
           <h5 class="card-title">
-            <a href="{% url 'category_blog' sub.id %}" class="text-decoration-none text-dark">{{ sub.name }}</a>
+            <a href="{% url 'childcategory_detail' sub.id %}" class="text-decoration-none text-dark">{{ sub.name }}</a>
           </h5>
           <p style="text-align: justify;" class="card-text">
-            <a href="{% url 'category_blog' sub.id %}" class="text-decoration-none text-dark">{{ sub.short_description }}</a>
+            <a href="{% url 'childcategory_detail' sub.id %}" class="text-decoration-none text-dark">{{ sub.short_description }}</a>
           </p>
         </div>
       </div>
@@ -40,6 +40,8 @@
 {% empty %}
   <p class="text-muted">Không có subcategory nào trong mục này.</p>
 {% endfor %}
+
+
 
   <!-- Pagination -->
 

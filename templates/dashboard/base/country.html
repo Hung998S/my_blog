@@ -1,0 +1,368 @@
+<div class="col-md-9">
+  <div class="card shadow-sm rounded">
+    <div class="card-header bg-dark text-light d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All Countries</h4>
+      <button class="btn btn-sm btn-light text-dark" data-bs-toggle="modal" data-bs-target="#addCountryModal">
+        + Add New Country
+      </button>
+    </div>
+
+    <div class="card-body p-0">
+      <table class="table table-hover table-striped table-bordered mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>ChildCategory</th>
+            <th>Country Name</th>
+            <th>Capital</th>
+            <th>Population</th>
+            <th>Area</th>
+            <th>Flag</th>
+            <th>Map</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for country in countries %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ country.childcategory.title }}</td>
+            <td>{{ country.name }}</td>
+            <td>{{ country.capital }}</td>
+            <td>{{ country.population }}</td>
+            <td>{{ country.area }}</td>
+            <td>
+              {% if country.flag %}
+                <img src="{{ country.flag.url }}" class="img-thumbnail" style="width:60px;height:40px;object-fit:cover;">
+              {% else %}<span class="text-muted">No Flag</span>{% endif %}
+            </td>
+            <td>
+              {% if country.map %}
+                <img src="{{ country.map.url }}" class="img-thumbnail" style="width:60px;height:40px;object-fit:cover;">
+              {% else %}<span class="text-muted">No Map</span>{% endif %}
+            </td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-outline-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editCountryModal"
+                  data-id="{{ country.id }}"
+                  data-child="{{ country.childcategory.id }}"
+                  data-name="{{ country.name }}"
+                  data-capital="{{ country.capital|escapejs }}"
+                  data-geography="{{ country.geography|escapejs }}"
+                  data-area="{{ country.area }}"
+                  data-population="{{ country.population }}"
+                  data-language="{{ country.language|escapejs }}"
+                  data-government="{{ country.government|escapejs }}"
+                  data-economy="{{ country.economy|escapejs }}"
+                  data-currency="{{ country.currency|escapejs }}"
+                  data-climate="{{ country.climate|escapejs }}"
+                  data-flag="{% if country.flag %}{{ country.flag.url }}{% endif %}"
+                  data-map="{% if country.map %}{{ country.map.url }}{% endif %}">
+                  <i class="fa fa-edit"></i>
+                </button>
+
+                <form method="post" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_country">
+                  <input type="hidden" name="country_id" value="{{ country.id }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this country?');">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="10" class="text-center text-muted">No countries found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="card-footer">
+        <!-- pagination giống cũ -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Country Modal -->
+<div class="modal fade" id="addCountryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_country">
+        <div class="modal-header bg-dark text-light">
+          <h5 class="modal-title">Add New Country</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <div class="container-fluid">
+            <!-- ChildCategory & Name -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">ChildCategory</label>
+                <select name="childcategory" class="form-select" required>
+                  <option value="">-- Select ChildCategory --</option>
+                  {% for child in childcategories %}
+                  <option value="{{ child.id }}">{{ child.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Country Name</label>
+                <input type="text" name="name" class="form-control" required>
+              </div>
+            </div>
+
+            <!-- Capital & Geography -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Capital</label>
+                <input type="text" name="capital" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Geography</label>
+                <textarea name="geography" id="addCountryGeography" class="form-control" rows="2"></textarea>
+              </div>
+            </div>
+
+            <!-- Area & Population -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Area</label>
+                <input type="text" name="area" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Population</label>
+                <input type="text" name="population" class="form-control">
+              </div>
+            </div>
+
+            <!-- Language & Government -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Language</label>
+                <input type="text" name="language" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Government</label>
+                <input type="text" name="government" class="form-control">
+              </div>
+            </div>
+
+            <!-- Economy & Currency -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Economy</label>
+                <input type="text" name="economy" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Currency</label>
+                <input type="text" name="currency" class="form-control">
+              </div>
+            </div>
+
+            <!-- Climate & Feature -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Climate</label>
+                <input type="text" name="climate" class="form-control">
+              </div>
+            </div>
+
+            <!-- Flag & Map -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Flag</label>
+                <input type="file" name="flag" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Map</label>
+                <input type="file" name="map" class="form-control">
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer bg-dark">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Country</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Country Modal -->
+<div class="modal fade" id="editCountryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit_country">
+        <input type="hidden" name="country_id" id="editCountryId">
+
+        <div class="modal-header bg-dark text-light">
+          <h5 class="modal-title">Edit Country</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body bg-light">
+          <div class="container-fluid">
+            <!-- tương tự Add modal, chỉ thay id và value -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">ChildCategory</label>
+                <select name="childcategory" id="editCountryChild" class="form-select" required>
+                  {% for child in childcategories %}
+                  <option value="{{ child.id }}">{{ child.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+                           <div class="col-md-6">
+                <label class="form-label">Country Name</label>
+                <input type="text" name="name" id="editCountryName" class="form-control" required>
+              </div>
+            </div>
+
+            <!-- Capital & Geography -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Capital</label>
+                <input type="text" name="capital" id="editCountryCapital" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Geography</label>
+                <textarea name="geography" id="editCountryGeography" class="form-control" rows="2"></textarea>
+              </div>
+            </div>
+
+            <!-- Area & Population -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Area</label>
+                <input type="text" name="area" id="editCountryArea" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Population</label>
+                <input type="text" name="population" id="editCountryPopulation" class="form-control">
+              </div>
+            </div>
+
+            <!-- Language & Government -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Language</label>
+                <input type="text" name="language" id="editCountryLanguage" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Government</label>
+                <input type="text" name="government" id="editCountryGovernment" class="form-control">
+              </div>
+            </div>
+
+            <!-- Economy & Currency -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Economy</label>
+                <input type="text" name="economy" id="editCountryEconomy" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Currency</label>
+                <input type="text" name="currency" id="editCountryCurrency" class="form-control">
+              </div>
+            </div>
+
+            <!-- Climate & Feature -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Climate</label>
+                <input type="text" name="climate" id="editCountryClimate" class="form-control">
+              </div>
+         
+            </div>
+
+            <!-- Flag & Map -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Change Flag</label>
+                <input type="file" name="flag" class="form-control">
+                <div id="currentCountryFlag" class="mt-2"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Change Map</label>
+                <input type="file" name="map" class="form-control">
+                <div id="currentCountryMap" class="mt-2"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer bg-dark">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Update Country</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CKEditor 5 Initialization -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let addGeographyEditor;
+    let editGeographyEditor;
+
+    // Initialize CKEditor for Add modal
+
+    ClassicEditor.create(document.querySelector('#addCountryGeography'), { ckfinder: { uploadUrl: "{% url 'upload_image' %}" } })
+        .then(editor => addGeographyEditor = editor).catch(console.error);
+
+    document.querySelector('#addCountryModal form').addEventListener('submit', function() {
+        document.querySelector('#addCountryFeature').value = addFeatureEditor.getData();
+        document.querySelector('#addCountryGeography').value = addGeographyEditor.getData();
+    });
+
+    // Initialize CKEditor for Edit modal
+    ClassicEditor.create(document.querySelector('#editCountryGeography'), { ckfinder: { uploadUrl: "{% url 'upload_image' %}" } })
+        .then(editor => editGeographyEditor = editor).catch(console.error);
+
+    document.querySelector('#editCountryModal form').addEventListener('submit', function() {
+        document.querySelector('#editCountryGeography').value = editGeographyEditor.getData();
+    });
+
+    // Populate Edit modal data
+    const editModal = document.getElementById("editCountryModal");
+    editModal.addEventListener("show.bs.modal", function (event) {
+        const button = event.relatedTarget;
+        document.getElementById("editCountryId").value = button.getAttribute("data-id");
+        document.getElementById("editCountryChild").value = button.getAttribute("data-child");
+        document.getElementById("editCountryName").value = button.getAttribute("data-name");
+        document.getElementById("editCountryCapital").value = button.getAttribute("data-capital");
+        document.getElementById("editCountryArea").value = button.getAttribute("data-area");
+        document.getElementById("editCountryPopulation").value = button.getAttribute("data-population");
+        document.getElementById("editCountryLanguage").value = button.getAttribute("data-language");
+        document.getElementById("editCountryGovernment").value = button.getAttribute("data-government");
+        document.getElementById("editCountryEconomy").value = button.getAttribute("data-economy");
+        document.getElementById("editCountryCurrency").value = button.getAttribute("data-currency");
+        document.getElementById("editCountryClimate").value = button.getAttribute("data-climate");
+
+        editGeographyEditor.setData(button.getAttribute("data-geography") || "");
+
+        const flagUrl = button.getAttribute("data-flag");
+        document.getElementById("currentCountryFlag").innerHTML = flagUrl
+            ? `<img src="${flagUrl}" class="img-thumbnail" style="width:60px;height:40px;object-fit:cover;">`
+            : `<span class="text-muted">No current flag</span>`;
+
+        const mapUrl = button.getAttribute("data-map");
+        document.getElementById("currentCountryMap").innerHTML = mapUrl
+            ? `<img src="${mapUrl}" class="img-thumbnail" style="width:60px;height:40px;object-fit:cover;">`
+            : `<span class="text-muted">No current map</span>`;
+    });
+});
+</script>
+

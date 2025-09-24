@@ -5,10 +5,15 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('category/<int:category_id>/', views.category_detail, name='category_detail'),
     path('subcategory/<int:category_id>/', views.subcategory_detail, name='subcategory_detail'),
+    path('childcategory/<int:subcategory_id>/', views.childcategory_detail, name='childcategory_detail'),
+    path('country/<int:pk>/', views.country_detail, name='country_detail'), 
+
     path('blogcategory/<int:subcategory_id>/', views.category_blog, name='category_blog'),
     path("youtube-info/", views.youtube_info, name="youtube_info"),
     path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),
     path('blog/search/', views.search, name='search'),
     path("", views.home, name="home"),
     path("auth/", views.auth_action, name="auth_action"),
+    path('blog/<int:post_id>/comment/', views.post_comment, name='post_comment'),
+    
     ]

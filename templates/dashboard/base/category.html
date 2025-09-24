@@ -12,28 +12,36 @@
         <thead class="table-dark">
           <tr>
             <th style="width:5%">#</th>
-            <th style="width:30%">Category Name</th>
+            <th style="width:10%">Icon</th>
+            <th style="width:25%">Category Name</th>
             <th style="width:20%">Created</th>
             <th style="width:20%">Updated</th>
-            <th style="width:15%">Action</th>
+            <th style="width:20%">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for cat in categories %}
           <tr>
             <td>{{ forloop.counter }}</td>
+            <td>
+              {% if cat.icon %}
+                <img src="{{ cat.icon.url }}" alt="icon" style="height:30px;">
+              {% else %}
+                <span class="text-muted">No icon</span>
+              {% endif %}
+            </td>
             <td>{{ cat.category_name }}</td>
             <td>{{ cat.created_at|date:"Y-m-d" }}</td>
             <td>{{ cat.updated_at|date:"Y-m-d" }}</td>
             <td>
               <!-- Nút Edit -->
               <button 
-                class="btn btn-sm btn-outline-success "
+                class="btn btn-sm btn-outline-success"
                 data-bs-toggle="modal"
                 data-bs-target="#editCategoryModal"
                 data-id="{{ cat.id }}"
                 data-name="{{ cat.category_name }}">
-                <i class="fa fa-edit "></i>
+                <i class="fa fa-edit"></i>
               </button>
 
               <!-- Nút Delete -->
@@ -49,7 +57,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5" class="text-center text-muted">No categories found.</td>
+            <td colspan="6" class="text-center text-muted">No categories found.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -63,7 +71,7 @@
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="action" value="add">
         <div class="modal-header bg-dark text-light">
@@ -74,6 +82,10 @@
           <div class="mb-3">
             <label class="form-label">Category Name</label>
             <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Icon</label>
+            <input type="file" name="icon" class="form-control">
           </div>
         </div>
         <div class="modal-footer bg-dark">
@@ -90,7 +102,7 @@
 <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="action" value="edit">
         <input type="hidden" name="cat_id" id="editCatId">
@@ -103,6 +115,13 @@
             <label class="form-label">Category Name</label>
             <input type="text" name="name" id="editCatName" class="form-control" required>
           </div>
+          <div class="mb-3">
+            <label class="form-label">Icon</label>
+            <input type="file" name="icon" class="form-control" >
+            {% if cat.icon %}
+              <p class="mt-2">Current: <img src="{{ cat.icon.url }}" alt="icon" style="height:30px;"></p>
+            {% endif %}
+          </div>
         </div>
         <div class="modal-footer bg-dark">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -112,6 +131,7 @@
     </div>
   </div>
 </div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
