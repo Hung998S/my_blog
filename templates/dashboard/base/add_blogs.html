@@ -9,66 +9,69 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
+                <!-- Hidden input nhận detail_country từ GET -->
+                <input type="hidden" name="detail_country" value="{{ request.GET.id|default:'' }}">
+
+                <!-- Thông tin Detail Country -->
+                {% if selected_detail %}
+                    <div class="mb-3">
+                        <p><strong>Detail Country:</strong> {{ selected_detail.name }}</p>
+                        <p><strong>Child Category:</strong> {{ selected_detail.childcategory.title }}</p>
+                    </div>
+                {% else %}
+                    <div class="mb-3 text-danger">
+                        Vui lòng chọn Detail Country từ sidebar trước khi thêm blog.
+                    </div>
+                {% endif %}
+
                 <!-- Title -->
                 <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input type="text" name="title" class="form-control" required>
-                </div>
-
-                <!-- SubCategory -->
-                <div class="mb-3">
-                    <label class="form-label">SubCategory</label>
-                    <select name="subcategory" class="form-select" required>
-                        <option value="">-- Select SubCategory --</option>
-                        {% for sub in subcategories %}
-                            <option value="{{ sub.id }}">{{ sub.category.category_name }} - {{ sub.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" name="title" id="title" class="form-control" required>
                 </div>
 
                 <!-- Short Description -->
                 <div class="mb-3">
-                    <label class="form-label">Short Description</label>
-                    <textarea name="short_description" class="form-control" rows="3" maxlength="1000"></textarea>
+                    <label for="short_description" class="form-label">Short Description</label>
+                    <textarea name="short_description" id="short_description" class="form-control" rows="3" maxlength="1000"></textarea>
                 </div>
 
                 <!-- Blog Body (CKEditor) -->
                 <div class="mb-3">
-                    <label class="form-label">Blog Body</label>
+                    <label for="id_blog_body" class="form-label">Blog Body</label>
                     <textarea name="blog_body" id="id_blog_body" class="form-control" rows="10"></textarea>
                 </div>
 
                 <!-- Thumbnail -->
                 <div class="mb-3">
-                    <label class="form-label">Thumbnail</label>
-                    <input type="file" name="blog_image" class="form-control">
+                    <label for="blog_image" class="form-label">Thumbnail</label>
+                    <input type="file" name="blog_image" id="blog_image" class="form-control">
                 </div>
 
                 <!-- Featured -->
                 <div class="form-check mb-3">
-                    <input type="checkbox" name="is_featured" class="form-check-input" id="featured">
+                    <input type="checkbox" name="is_featured" id="featured" class="form-check-input">
                     <label for="featured" class="form-check-label">Featured</label>
                 </div>
 
                 <!-- Status -->
                 <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="status" id="status" class="form-select">
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save Blog</button>
+                <!-- Buttons -->
+                <button type="submit" class="btn btn-primary" {% if not selected_detail %}disabled{% endif %}>Save Blog</button>
                 <a href="{% url 'blogs' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>
 </div>
 
-
-
-
+<!-- CKEditor -->
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
 <script>
 ClassicEditor
@@ -78,15 +81,10 @@ ClassicEditor
     }
 })
 .then(editor => {
-    // Sync dữ liệu trước submit
-    document.querySelector('form').addEventListener('submit', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function() {
         document.querySelector('#id_blog_body').value = editor.getData();
     });
 })
-.catch(error => { console.error(error); });
+.catch(error => console.error(error));
 </script>
-
-
-
-
-

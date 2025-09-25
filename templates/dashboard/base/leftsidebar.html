@@ -58,24 +58,45 @@
 
   </div>
 
-  <!-- Categories & Subcategories -->
-  <div class="nav mt-3 flex-column nav-pills bg-light p-3 rounded shadow-sm" aria-orientation="vertical">
-    {% for category in categories %}
-        <span class="nav-link text-dark fw-bold mb-1">{{ category.category_name }}</span>
-        
-        {% for sub in category.subcategories.all %}
-            <a href="{% url 'blogs' %}?id={{ sub.id }}"
-               class="nav-link d-flex align-items-center ms-3 mb-1
-               {% if request.GET.id|default:'' == sub.id|stringformat:'s' %}
-                   active bg-warning text-dark fw-bold
-               {% else %}text-secondary{% endif %}">
-                <i class="bi bi-folder2-open me-2"></i> {{ sub.name }}
-            </a>
-        {% empty %}
-            <span class="text-muted ms-3">No subcategories</span>
-        {% endfor %}
+ <!-- childcategories & Detail Countries -->
+<div class="accordion mt-3" id="childcategoryAccordion">
+    {% for child in childcategories %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ child.id }}">
+            <button class="accordion-button collapsed text-dark fw-bold" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#collapse{{ child.id }}" 
+                    aria-expanded="false" 
+                    aria-controls="collapse{{ child.id }}">
+                {{ child.title }}
+            </button>
+        </h2>
+        <div id="collapse{{ child.id }}" class="accordion-collapse collapse {% if selected_detail and selected_detail.childcategory.id == child.id %}show{% endif %}" 
+             aria-labelledby="heading{{ child.id }}" 
+             data-bs-parent="#childcategoryAccordion">
+            <div class="accordion-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for detail in child.detail_countries.all %}
+                        <a href="{% url 'add_blogs' %}?id={{ detail.id }}"
+                           class="list-group-item list-group-item-action
+                           {% if selected_detail and selected_detail.id == detail.id %}
+                               active bg-warning text-dark fw-bold
+                           {% else %}text-secondary{% endif %}">
+                            <i class="bi bi-folder2-open me-2"></i> {{ detail.name }}
+                        </a>
+                    {% empty %}
+                        <span class="text-muted ms-3 d-block">No detail countries</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
     {% empty %}
-        <span class="text-muted">No categories</span>
+        <span class="text-muted d-block">No child categories</span>
     {% endfor %}
-  </div>
+</div>
+
+
+
+
 </div>

@@ -1,35 +1,104 @@
-    <div class="col-12 col-md-9 ">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'subcategory_detail' category.id %}">{{ category.category_name }}</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">{{ subcategory.name }}</li>
-            </ol>
-        </nav>
+{% load static %}
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-3">
-    {% for blog in blogs %}
-    <div class="col">
-        <div class="mycard">
-            <div class="mycard-img">
-                <a href="{% url 'blog_detail' blog.id %}">
-                    <img src="{{ blog.blog_image.url }}" 
-                         alt="{{ blog.title }}"
-                         class="mycard-imgbox">
+
+<style>
+    /* Card hình vuông */
+.blog-card-square {
+    border-radius: 1rem;
+    overflow: hidden;
+    font-family: ui-sans-serif;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    color: white;
+
+      /* Background ảnh */
+    background: url("{% static 'images/bg.jpg' %}") no-repeat center center; 
+    background-size: cover;       
+}
+
+.blog-card-square a {
+    text-decoration: none; /* bỏ gạch chân */
+    color: inherit;        /* giữ màu chữ như cài đặt */
+
+}
+
+.blog-card-square:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.2);
+}
+
+/* Ảnh vuông bằng background */
+.blog-img-square {
+    width: 100%;
+    aspect-ratio: 1 / 1;  /* tỉ lệ 1:1 */
+    background-size: cover;
+    background-position: top;
+    transition: transform 0.3s;
+    height: 280px;
+}
+
+.blog-card-square:hover .blog-img-square {
+    transform: scale(1.05);
+}
+
+/* Tiêu đề */
+.blog-title-square {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6rem;        /* Chiều cao 1 dòng */
+    height: 3.6rem;             /* 2 dòng = 1.2rem x 2 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;            /* căn giữa theo ngang */
+    display: flex;                 /* dùng flex để căn giữa theo dọc */
+    align-items: center;           /* căn giữa theo dọc */
+    justify-content: center;       /* căn giữa theo ngang (tùy chọn) */
+    
+}
+
+</style>
+
+<div class="col-12 col-md-9">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-2 rounded shadow-sm">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+
+            {% if subcategory %}
+                <li class="breadcrumb-item">
+                    <a href="{% url 'subcategory_detail' category.id %}">{{ subcategory.name }}</a>
+                </li>
+            {% endif %}
+
+            {% if childcategory %}
+                <li class="breadcrumb-item">
+                    <a href="{% url 'childcategory_detail' subcategory.id %}">{{ childcategory.title }}</a>
+                </li>
+            {% endif %}
+
+            {% if detailcountry %}
+                <li class="breadcrumb-item active" aria-current="page">{{ detailcountry.name }}</li>
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">Danh mục bài viết</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <!-- Blog List -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-3">
+        {% for blog in blogs %}
+        <div class="col">
+            <div class="blog-card-square shadow-sm">
+                <a href="{{ blog.get_absolute_url }}">
+                    <div class="blog-img-square" style="background-image: url('{{ blog.blog_image.url }}');"></div>
+                    <h5 class="blog-title-square mt-2 text-center">{{ blog.title }}</h5>
                 </a>
             </div>
-            <hr class="mycard-divider">
-            <div class="mycard-footer">
-                <div class="mycard-title">
-                    <a href="{% url 'blog_detail' blog.id %}">{{ blog.title }}</a>
-                </div>
-            </div>
         </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-muted text-center">Không có bài viết nào.</p>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>Không có bài viết nào.</p>
-    {% endfor %}
-</div>
 </div>

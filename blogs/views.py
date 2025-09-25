@@ -1,6 +1,6 @@
 import requests
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, SubCategory, Blog, Comment , Country ,ChildCategory
+from .models import Category, SubCategory, Blog, Comment , Country ,ChildCategory, DetailCountry
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render
@@ -143,22 +143,25 @@ def detailcountry_detail(request, childcategory_id):
     return render(request, 'country_detail.html', context)
 
 
-def category_blog(request, subcategory_id):
-    # Lấy đúng subcategory theo id
-    subcategory = get_object_or_404(SubCategory, id=subcategory_id)
-    # Lấy category cha của subcategory này
-    category = subcategory.category  
-    # Lấy blog thuộc subcategory này
-    blogs = Blog.objects.filter(subcategory=subcategory,status='published').order_by('-created_at')
-    # Bài viết nổi bật (toàn bộ site hoặc chỉ subcategory này tùy ý)
+# views.py
+def category_blog(request, detailcountry_id):
+    detail = get_object_or_404(DetailCountry, id=detailcountry_id)
+    childcategory = detail.childcategory
+    subcategory = childcategory.subcategory
+    category = subcategory.category
+
+    blogs = Blog.objects.filter(detail_country=detail, status='published').order_by('-created_at')
     featured_post = Blog.objects.filter(is_featured=True, status='published')
 
     return render(request, 'category_blog.html', {
-        'category': category,
+        'detail': detail,
+        'childcategory': childcategory,
         'subcategory': subcategory,
+        'category': category,
         'blogs': blogs,
         'featured_post': featured_post,
     })
+
 
 
 def youtube_info(request):
@@ -182,17 +185,14 @@ def youtube_info(request):
 
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
-    subcategory = blog.subcategory
-    category = subcategory.category
 
-    # Lấy blog liên quan
-    related_blogs = Blog.objects.filter(subcategory=subcategory).exclude(id=blog.id).order_by('-created_at')[:4]
+    # Lấy blog liên quan (lọc theo detail_country)
+    related_blogs = Blog.objects.filter(detail_country=blog.detail_country).exclude(id=blog.id).order_by('-created_at')[:4]
     if not related_blogs.exists():
         related_blogs = Blog.objects.exclude(id=blog.id).order_by('-created_at')[:4]
 
     # Xử lý POST: thêm comment hoặc xóa comment (nếu superuser)
     if request.method == "POST":
-        # Xóa comment (superuser)
         if 'delete_comment_id' in request.POST and request.user.is_superuser:
             comment_id = request.POST.get('delete_comment_id')
             comment_to_delete = get_object_or_404(Comment, id=comment_id)
@@ -200,16 +200,11 @@ def blog_detail(request, blog_id):
             messages.success(request, "Comment đã được xóa!")
             return redirect(f'/blog/{blog_id}/')
 
-        # Thêm comment
         elif request.user.is_authenticated:
             if request.user.is_active:
                 content = request.POST.get("comment")
                 if content:
-                    Comment.objects.create(
-                        blog=blog,
-                        user=request.user,
-                        content=content
-                    )
+                    Comment.objects.create(blog=blog, user=request.user, content=content)
                     messages.success(request, "Bình luận của bạn đã được gửi!")
                 else:
                     messages.error(request, "Bình luận không được để trống!")
@@ -219,18 +214,15 @@ def blog_detail(request, blog_id):
 
     # Lấy comment với pagination
     comment_list = Comment.objects.filter(blog=blog).order_by('-created_at')
-    paginator = Paginator(comment_list, 5)  # 5 comment/trang
+    paginator = Paginator(comment_list, 5)
     page_number = request.GET.get('page')
     comments = paginator.get_page(page_number)
 
     return render(request, 'blog_detail.html', {
         'blog': blog,
-        'subcategory': subcategory,
-        'category': category,
         'related_blogs': related_blogs,
         'comments': comments,
     })
-
 
 def search(request):
     keyword = request.GET.get('keyword', '').strip()

@@ -12,7 +12,7 @@ urlpatterns = [
     path('dashboard/detail-countries/', views.detail_countries, name='detail_countries'),
 
     path('blogs/', views.blogs, name= 'blogs'),
-    path('dashboard/subcategories/<int:sub_id>/', views.subcategory_detail, name='subcategories'),
+    # path('dashboard/subcategories/<int:sub_id>/', views.subcategory_detail, name='subcategories'),
     path('blogs/add/', views.add_blogs, name="add_blogs"),
     path('upload-image/', views.upload_image, name='upload_image'),
     path('blogs/<int:blog_id>/edit/', views.edit_blogs, name="edit_blogs"),

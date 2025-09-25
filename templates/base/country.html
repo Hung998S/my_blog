@@ -12,14 +12,43 @@
     box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
     font-size: 1.5rem;
     transition: transform 0.2s;
+    cursor: pointer;
 }
-
 .detail-country-card:hover {
     transform: translateY(-5px);
 }
 </style>
 
 <div class="col-12 col-md-9">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+
+            {% if country.childcategory %}
+                {% with child=country.childcategory %}
+                    {% if child.subcategory %}
+                        {% if child.subcategory.category %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'category_detail' child.subcategory.category.id %}">
+                                    {{ child.subcategory.category.category_name }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'childcategory_detail' child.subcategory.id %}">
+                                {{ child.subcategory.name }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+
+            <li class="breadcrumb-item active" aria-current="page">{{ country.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Country Title -->
     <h1 class="mb-4 text-center">{{ country.name }}</h1>
 
     <!-- Card thông tin + ảnh -->
@@ -40,36 +69,34 @@
                     </ul>
                 </div>
             </div>
-
             <div class="col-md-6 text-center pb-3">
                 {% if country.flag %}
-                <div class="mb-3">
-                    <h6 class="fw-bold">Quốc kỳ</h6>
-                    <img src="{{ country.flag.url }}" class="img-fluid border" alt="{{ country.name }} flag" style="max-height:80px;">
-                </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Quốc kỳ</h6>
+                        <img src="{{ country.flag.url }}" class="img-fluid border" alt="{{ country.name }} flag" style="max-height:80px;">
+                    </div>
                 {% endif %}
-
                 {% if country.map %}
-                <div>
-                    <h6 class="fw-bold">Bản đồ</h6>
-                    <img src="{{ country.map.url }}" class="img-fluid border" alt="{{ country.name }} map" style="max-height:550px;">
-                </div>
+                    <div>
+                        <h6 class="fw-bold">Bản đồ</h6>
+                        <img src="{{ country.map.url }}" class="img-fluid border" alt="{{ country.name }} map" style="max-height:550px;">
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 
+    <!-- DetailCountries Cards -->
     <div class="row">
-        {% if detailcountries %}
-            {% for detail in detailcountries %}
-                <div class="col-md-4 mb-3">
-                    <div class="detail-country-card">
-                        {{ detail.name }}
-                    </div>
+    {% for detail in detailcountries %}
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'category_blog' detailcountry_id=detail.id %}" class="text-decoration-none">
+                <div class="detail-country-card">
+                    {{ detail.name }}
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-muted text-center w-100">No details available.</p>
-        {% endif %}
-    </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
 </div>

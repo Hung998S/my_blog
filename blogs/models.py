@@ -131,15 +131,23 @@ class DetailCountry(models.Model):
     def __str__(self):
         return self.name
     
-
 class Blog(models.Model):
     title = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
-    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)  
+
+    detail_country = models.ForeignKey(
+        DetailCountry,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='blogs',
+        verbose_name="Detail Country"
+    )
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     blog_image = models.ImageField(upload_to='uploads/%y/%m/%d')
     short_description = models.TextField(max_length=1000)
-    blog_body = CKEditor5Field('Description', config_name='default')  
+    blog_body = CKEditor5Field('Description', config_name='default')
     status = models.CharField(max_length=100, choices=STATUS_CHOICE, default='draft')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -150,7 +158,7 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse('blog_detail', args=[self.id])
 

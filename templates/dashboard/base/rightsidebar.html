@@ -1,6 +1,6 @@
 <div class="col-md-9">
-  <div class="row g-3">  <!-- g-3: khoảng cách giữa các card -->
-    
+  <div class="row g-3">
+
     <!-- All Categories -->
     <div class="col-md-4">
       <div class="card text-center shadow-sm border-0">
@@ -23,12 +23,45 @@
       </div>
     </div>
 
-    <!-- All Posts -->
+    <!-- All ChildCategories -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-collection fs-1 text-info mb-2"></i>
+          <h5 class="card-title text-uppercase">All ChildCategories</h5>
+          <h2 class="display-5 fw-bold">{{ childcategories_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Countries -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-flag fs-1 text-danger mb-2"></i>
+          <h5 class="card-title text-uppercase">All Countries</h5>
+          <h2 class="display-5 fw-bold">{{ countries_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Detail Countries -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm border-0">
+        <div class="card-body">
+          <i class="bi bi-card-list fs-1 text-secondary mb-2"></i>
+          <h5 class="card-title text-uppercase">All Detail Countries</h5>
+          <h2 class="display-5 fw-bold">{{ detailcountries_counts }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Blogs -->
     <div class="col-md-4">
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
           <i class="bi bi-journal-text fs-1 text-warning mb-2"></i>
-          <h5 class="card-title text-uppercase">All Posts</h5>
+          <h5 class="card-title text-uppercase">All Blogs</h5>
           <h2 class="display-5 fw-bold">{{ blogs_counts }}</h2>
         </div>
       </div>

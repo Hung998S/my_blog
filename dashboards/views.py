@@ -10,24 +10,22 @@ from django.core.files.storage import default_storage
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
+from django.shortcuts import render
 
 
 # Create your views here.
 @user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
-    category_counts = Category.objects.all().count()
-    subcategories_counts = SubCategory.objects.all().count()
-    blogs_counts = Blog.objects.all().count()
-
     context = {
-        'category_counts' : category_counts,
-        'subcategories_counts' : subcategories_counts,
-        'blogs_counts': blogs_counts
+        'category_counts': Category.objects.count(),
+        'subcategories_counts': SubCategory.objects.count(),
+        'childcategories_counts': ChildCategory.objects.count(),
+        'countries_counts': Country.objects.count(),
+        'detailcountries_counts': DetailCountry.objects.count(),
+        'blogs_counts': Blog.objects.count(),
     }
 
     return render(request, 'dashboard/dashboard.html', context)
-
-
 
 def categories(request):
     if request.method == "POST":
@@ -313,10 +311,12 @@ def detail_countries(request):
     return render(request, 'dashboard/detail_countries.html', context)
 
 
+
+# Lọc blog theo detail_country
 def blogs(request):
-    sub_id = request.GET.get('id')  # lấy id subcategory từ query string
-    if sub_id:
-        posts = Blog.objects.filter(subcategory_id=sub_id).order_by('-created_at')
+    detail_id = request.GET.get('id')  # lấy id detail_country từ query string
+    if detail_id:
+        posts = Blog.objects.filter(detail_country_id=detail_id).order_by('-created_at')
     else:
         posts = Blog.objects.all().order_by('-created_at')
 
@@ -325,32 +325,38 @@ def blogs(request):
     }
     return render(request, 'dashboard/blogs.html', context)
 
-def subcategory_detail(request, sub_id):
-    sub = get_object_or_404(SubCategory, id=sub_id)
-    blogs = Blog.objects.filter(subcategory=sub).order_by('-created_at')
+
+# Nếu vẫn muốn có view cho detail_country (giống subcategory_detail cũ)
+def detail_country_view(request, detail_id):
+    detail = get_object_or_404(DetailCountry, id=detail_id)
+    blogs = Blog.objects.filter(detail_country=detail).order_by('-created_at')
     context = {
-        'sub': sub,
+        'detail': detail,
         'posts': blogs
     }
     return render(request, 'dashboard/blogs.html', context)
 
 
 def add_blogs(request):
+    # Lấy id detail country từ sidebar (?id=xx)
+    detail_id = request.GET.get("id")
+    detail_country = None
+    if detail_id:
+        detail_country = get_object_or_404(DetailCountry, id=detail_id)
+
     if request.method == "POST":
         title = request.POST.get("title")
-        sub_id = request.POST.get("subcategory")
         short_desc = request.POST.get("short_description")
         blog_body = request.POST.get("blog_body")
         status = request.POST.get("status", "draft")
         is_featured = request.POST.get("is_featured") == "on"
         image = request.FILES.get("blog_image")
 
-        if title and sub_id and blog_body:
-            sub = get_object_or_404(SubCategory, id=sub_id)
+        if title and blog_body and detail_country:
             Blog.objects.create(
                 title=title,
-                slug=title.lower().replace(" ", "-"),  # tự tạo slug
-                subcategory=sub,
+                slug=title.lower().replace(" ", "-"),
+                detail_country=detail_country,
                 author=request.user,
                 short_description=short_desc,
                 blog_body=blog_body,
@@ -361,12 +367,19 @@ def add_blogs(request):
             messages.success(request, f"Blog '{title}' created successfully!")
             return redirect("blogs")
         else:
-            messages.error(request, "Title, SubCategory và Blog Body là bắt buộc!")
+            messages.error(request, "Title, DetailCountry và Blog Body là bắt buộc!")
 
-    subs = SubCategory.objects.all()
-    return render(request, "dashboard/add_blogs.html", {"subcategories": subs})
+    # Lấy tất cả childcategories và detail_countries để render sidebar
+    childcategories = ChildCategory.objects.prefetch_related("detail_countries").all()
 
-
+    return render(
+        request,
+        "dashboard/add_blogs.html",
+        {
+            "childcategories": childcategories,
+            "selected_detail": detail_country,
+        }
+    )
 
 @csrf_exempt
 def upload_image(request):
@@ -384,36 +397,37 @@ def upload_image(request):
         "error": {"message": "Invalid request"}
     })
 
+
 def edit_blogs(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
 
     if request.method == "POST":
         title = request.POST.get("title")
-        sub_id = request.POST.get("subcategory")
+        detail_country_id = request.POST.get("detail_country")  # 🔄 đổi từ subcategory sang detail_country
         short_desc = request.POST.get("short_description")
         blog_body = request.POST.get("blog_body")
         status = request.POST.get("status", "draft")
         is_featured = request.POST.get("is_featured") == "on"
         image = request.FILES.get("blog_image")
 
-        # Debug thử
+        # Debug
         print("=== DEBUG EDIT BLOG ===")
-        print("FILES:", request.FILES)         # Xem có file nào không
-        print("Image:", image)                 # Xem ảnh nhận vào là gì
-        print("Old Image:", blog.blog_image)   # Xem ảnh cũ trong DB
+        print("FILES:", request.FILES)
+        print("Image:", image)
+        print("Old Image:", blog.blog_image)
 
-        if title and sub_id and blog_body:
-            sub = get_object_or_404(SubCategory, id=sub_id)
+        if title and detail_country_id and blog_body:
+            detail_country = get_object_or_404(DetailCountry, id=detail_country_id)
 
             blog.title = title
             blog.slug = title.lower().replace(" ", "-")
-            blog.subcategory = sub
+            blog.detail_country = detail_country  # 🔄 gán detail_country
             blog.short_description = short_desc
             blog.blog_body = blog_body
             blog.is_featured = is_featured
             blog.status = status
 
-            if image:  # nếu upload ảnh mới thì thay ảnh cũ
+            if image:  # Nếu upload ảnh mới thì thay ảnh cũ
                 print(">>> Updating image to:", image.name)
                 blog.blog_image = image
             else:
@@ -423,11 +437,11 @@ def edit_blogs(request, blog_id):
             messages.success(request, f"Blog '{title}' updated successfully!")
             return redirect("blogs")
         else:
-            messages.error(request, "Title, SubCategory và Blog Body là bắt buộc!")
+            messages.error(request, "Title, DetailCountry và Blog Body là bắt buộc!")
 
-    subs = SubCategory.objects.all()
+    detail_countries = DetailCountry.objects.all()
     return render(request, "dashboard/edit_blogs.html", {
-        "subcategories": subs,
+        "detail_countries": detail_countries,
         "blog": blog
     })
 

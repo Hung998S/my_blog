@@ -73,7 +73,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'blogs.context_processors.categories_processor',
                 'blogs.context_processors.youtube_channel_context',
-
+                'blogs.context_processors.childcategories_processor', 
             ],
         },
     },
