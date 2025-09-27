@@ -56,6 +56,14 @@
       <i class="bi bi-person-bounding-box me-2"></i> Users
     </a>
 
+    <a href="{% url 'comments' %}" 
+       class="nav-link d-flex align-items-center mb-2
+       {% if request.resolver_match.url_name == 'comments' %}
+           active bg-warning text-dark fw-bold
+       {% else %}text-dark{% endif %}">
+      <i class="bi bi-chat-dots me-2"></i> Comments
+    </a>
+
   </div>
 
  <!-- childcategories & Detail Countries -->

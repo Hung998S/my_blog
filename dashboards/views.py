@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from blogs.models import Category,SubCategory ,Blog, ChildCategory, Country  ,DetailCountry
+from blogs.models import Category,SubCategory ,Blog, ChildCategory, Country  ,DetailCountry, Comment
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
@@ -457,6 +457,15 @@ def delete_blogs(request, blog_id):
     messages.success(request, f"Blog '{blog.title}' deleted successfully!")
     return redirect("blogs")
 
+def comments_list(request):
+    comments = Comment.objects.all().order_by('-created_at')
+    paginator = Paginator(comments, 10)  # 10 comment mỗi trang
+    page_number = request.GET.get('page')
+    comments_page = paginator.get_page(page_number)
+
+    return render(request, 'dashboard/comments_list.html', {
+        'comments': comments_page
+    })
 
 
 def users(request):

@@ -30,7 +30,7 @@
                     {% if child.subcategory %}
                         {% if child.subcategory.category %}
                             <li class="breadcrumb-item">
-                                <a href="{% url 'category_detail' child.subcategory.category.id %}">
+                                <a href="{% url 'subcategory_detail' child.subcategory.category.id %}">
                                     {{ child.subcategory.category.category_name }}
                                 </a>
                             </li>
@@ -88,15 +88,14 @@
 
     <!-- DetailCountries Cards -->
     <div class="row">
-    {% for detail in detailcountries %}
-        <div class="col-md-4 mb-3">
-            <a href="{% url 'category_blog' detailcountry_id=detail.id %}" class="text-decoration-none">
-                <div class="detail-country-card">
-                    {{ detail.name }}
-                </div>
-            </a>
-        </div>
-    {% endfor %}
-</div>
-
+        {% for detail in detailcountries %}
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'category_blog' detailcountry_id=detail.id %}" class="text-decoration-none">
+                    <div class="detail-country-card">
+                        {{ detail.name }}
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
 </div>

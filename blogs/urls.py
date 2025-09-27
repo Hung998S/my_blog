@@ -7,7 +7,6 @@ urlpatterns = [
     path('subcategory/<int:category_id>/', views.subcategory_detail, name='subcategory_detail'),
     path('childcategory/<int:subcategory_id>/', views.childcategory_detail, name='childcategory_detail'),
     path('country/<int:pk>/', views.country_detail, name='country_detail'), 
-    
     path('blogcategory/<int:detailcountry_id>/', views.category_blog, name='category_blog'),
     path("youtube-info/", views.youtube_info, name="youtube_info"),
     path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),

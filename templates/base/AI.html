@@ -1,7 +1,9 @@
 <div class="col-12 col-md-6 mb-2" >
-<a class="nav-link textAi" href="{% url 'category_blog' categories.0.subcategories.all.1.id %}">
-    {{ categories.0.subcategories.all.1.name }}
-</a>
+{% if detail_country %}
+    <a class="nav-link textAi" href="{% url 'category_blog' detail_country.id %}">
+        {{ detail_country.name }}
+    </a>
+{% endif %}
 
 
 <div class="row mt-3">

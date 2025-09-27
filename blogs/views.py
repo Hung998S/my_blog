@@ -11,14 +11,31 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 def home(request):
-    # --- Lấy dữ liệu cho trang ---
-    categories = Category.objects.all().order_by('created_at')
+    import requests
+
+    categories = Category.objects.prefetch_related(
+        'subcategories__childcategories__detail_countries'
+    ).order_by('created_at')
+
     subcategories = SubCategory.objects.all()
     featured_post = Blog.objects.filter(is_featured=True, status='published')
     posts = Blog.objects.filter(is_featured=False, status='published')
     latest_posts = Blog.objects.order_by('-created_at')[:4]
 
-    # --- Lấy dữ liệu YouTube channel ---
+    # Lấy detail_country đầu tiên từ SubCategory thứ 2 của Category đầu tiên
+    detail_country = None
+    try:
+        first_category = categories[0]
+        second_subcategory = first_category.subcategories.all()[1]
+
+        for child in second_subcategory.childcategories.all():
+            if child.detail_countries.exists():
+                detail_country = child.detail_countries.first()
+                break
+    except IndexError:
+        detail_country = None
+
+    # Lấy dữ liệu YouTube channel
     channel = None
     api_url = "https://www.googleapis.com/youtube/v3/channels"
     params = {
@@ -41,9 +58,11 @@ def home(request):
         'latest_posts': latest_posts,
         'posts': posts,
         'channel': channel,
+        'detail_country': detail_country,  # 👈 THÊM DỮ LIỆU NÀY
     }
 
     return render(request, 'home.html', context)
+
 
 
 def get_youtube_channel():
@@ -186,12 +205,20 @@ def youtube_info(request):
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
 
+    # 🟢 Lấy detailcountry, childcategory, subcategory, category để breadcrumb
+    detailcountry = getattr(blog, "detail_country", None)
+    childcategory = getattr(detailcountry, "childcategory", None) if detailcountry else None
+    subcategory = getattr(childcategory, "subcategory", None) if childcategory else None
+    category = getattr(subcategory, "category", None) if subcategory else None
+
     # Lấy blog liên quan (lọc theo detail_country)
-    related_blogs = Blog.objects.filter(detail_country=blog.detail_country).exclude(id=blog.id).order_by('-created_at')[:4]
+    related_blogs = Blog.objects.filter(
+        detail_country=blog.detail_country
+    ).exclude(id=blog.id).order_by('-created_at')[:4]
     if not related_blogs.exists():
         related_blogs = Blog.objects.exclude(id=blog.id).order_by('-created_at')[:4]
 
-    # Xử lý POST: thêm comment hoặc xóa comment (nếu superuser)
+    # Xử lý POST: thêm comment hoặc xóa comment
     if request.method == "POST":
         if 'delete_comment_id' in request.POST and request.user.is_superuser:
             comment_id = request.POST.get('delete_comment_id')
@@ -222,7 +249,12 @@ def blog_detail(request, blog_id):
         'blog': blog,
         'related_blogs': related_blogs,
         'comments': comments,
+        'detailcountry': detailcountry,
+        'childcategory': childcategory,
+        'subcategory': subcategory,
+        'category': category,
     })
+
 
 def search(request):
     keyword = request.GET.get('keyword', '').strip()
